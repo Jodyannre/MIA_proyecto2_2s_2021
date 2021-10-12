@@ -1,0 +1,22 @@
+{
+  "name": "mia_proyecto2_2s_2021",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jodyannre/MIA_proyecto2_2s_2021.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jodyannre/MIA_proyecto2_2s_2021/issues"
+  },
+  "homepage": "https://github.com/Jodyannre/MIA_proyecto2_2s_2021#readme",
+  "dependencies": {
+    "oracledb": "^5.2.0"
+  }
+}
