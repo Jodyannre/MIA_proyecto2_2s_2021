@@ -11,19 +11,6 @@
 # production
 /build
 
-
-#Node modules
-/Backend/node_modules
-/Backend_BD/instantclient_21_3
-/Backend_BD/node_modules
-/Backend_BD/Wallet_proyecto2
-cwallet.sso
-ewallet.p12
-keystore.jks
-ojdbc.properties
-sqlnet.ora
-tnsnames.ora
-truststore.jks
 # misc
 .DS_Store
 .env.local

@@ -5,8 +5,8 @@ async function run() {
   let connection;
 
   try {
-
-    connection = await oracledb.getConnection({ user: "ADMIN", password: "YlwUzeylN*fuw3i@=Xip!", connectionString: "proyecto2_medium" });
+    oracledb.initOracleClient({libDir: './instantclient_21_3'})
+    connection = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
 
     // Create a table
 
