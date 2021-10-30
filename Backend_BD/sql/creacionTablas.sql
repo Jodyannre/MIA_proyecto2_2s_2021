@@ -15,9 +15,18 @@ CREATE SEQUENCE conteo_id_detalle_departamento START WITH 1;
 CREATE SEQUENCE conteo_id_detalle_documento START WITH 1;
 CREATE SEQUENCE conteo_id_usuario START WITH 1;
 CREATE SEQUENCE conteo_id_calificacion START WITH 1;
+CREATE SEQUENCE conteo_id_detalle_expediente START WITH 1;
+CREATE SEQUENCE conteo_id_detalle_usuario START WITH 1;
+CREATE SEQUENCE conteo_id_estado_puesto START WITH 1;
+CREATE SEQUENCE conteo_id_detalle_revision START WITH 1;
 
 
 --TABLAS MORADAS
+CREATE TABLE estado_puesto (
+    id_estado_puesto NUMERIC(10) DEFAULT conteo_id_estado_puesto.nextval NOT NULL PRIMARY KEY,
+    nombre_estado_puesto VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE estado_documento (
     id_estado_documento NUMERIC(10) DEFAULT conteo_estado_documento.nextval NOT NULL PRIMARY KEY,
     nombre_estado_documento VARCHAR(50) NOT NULL
@@ -35,7 +44,7 @@ CREATE TABLE estado_expediente (
 
 CREATE TABLE requisito (
     id_requisito NUMERIC(10) DEFAULT conteo_requisito.nextval NOT NULL PRIMARY KEY,
-    nombre_requisito VARCHAR(50) NOT NULL,
+    nombre_requisito VARCHAR(200) NOT NULL,
     tamano NUMERIC(10) NOT NULL,
     obligatorio NUMERIC(10) NOT NULL
 );
@@ -43,14 +52,18 @@ CREATE TABLE requisito (
 CREATE TABLE departamento (
     id_departamento NUMERIC(10) DEFAULT conteo_departamento.nextval NOT NULL PRIMARY KEY,
     nombre_departamento VARCHAR(100) NOT NULL,
-    capital FLOAT NOT NULL
+    capital VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE puesto (
     id_puesto NUMERIC(10) DEFAULT conteo_puesto.nextval NOT NULL PRIMARY KEY,
     nombre_puesto VARCHAR(100) NOT NULL,
-    puesto VARCHAR(200),
-    salario FLOAT NOT NULL
+    imagen VARCHAR(300),
+    salario FLOAT NOT NULL,
+    id_estado_puesto NUMERIC(10) NOT NULL,
+    CONSTRAINT fk_id_estado_puesto
+        FOREIGN KEY (id_estado_puesto)
+        REFERENCES estado_puesto(id_estado_puesto)
 );
 
 CREATE TABLE rol (
@@ -81,13 +94,13 @@ CREATE TABLE documento (
 
 CREATE TABLE expediente (
     id_expediente NUMERIC(10) DEFAULT conteo_expediente.nextval NOT NULL PRIMARY KEY,
-    cui NUMERIC(10) NOT NULL,
+    cui NUMERIC(13) NOT NULL,
     nombres VARCHAR(100) NOT NULL,
     apellidos VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     direccion VARCHAR(200) NOT NULL,
     telefono NUMERIC(10) NOT NULL,
-    cv VARCHAR(500) NOT NULL,
+    cv NUMERIC(2) NOT NULL,
     id_estado_expediente NUMERIC(10) NOT NULL,
     CONSTRAINT fk_id_estado_expediente
         FOREIGN KEY (id_estado_expediente)
@@ -171,22 +184,23 @@ CREATE TABLE detalle_documento (
 CREATE TABLE usuario (
     id_usuario NUMERIC(10) DEFAULT conteo_id_usuario.nextval NOT NULL PRIMARY KEY,
     id_rol NUMERIC(10),
-    id_departamento NUMERIC(10),
-    nombre_usuario VARCHAR(50) NOT NULL,
+    nombre_usuario VARCHAR(100) NOT NULL,
     pass_usuario VARCHAR(100) NOT NULL,
     fecha_inicio DATE NOT NULL,
     fecha_fin DATE,
     estado_usuario NUMERIC(10) NOT NULL,
-    id_expediente NUMERIC(10) NOT NULL,
+    id_expediente NUMERIC(10),
+    id_puesto NUMERIC(10),
+    email VARCHAR(100),
     CONSTRAINT fk_id_rol_usuario
         FOREIGN KEY (id_rol)
         REFERENCES rol(id_rol),    
-    CONSTRAINT fk_id_departamento_usuario
-        FOREIGN KEY (id_departamento)
-        REFERENCES departamento(id_departamento),
     CONSTRAINT fk_id_expediente_usuario
         FOREIGN KEY (id_expediente)
-        REFERENCES expediente(id_expediente)          
+        REFERENCES expediente(id_expediente),
+    CONSTRAINT fk_id_estado_puesto_usuario
+            FOREIGN KEY (id_puesto)
+            REFERENCES puesto(id_puesto)
 );
 
 --TABLAS NARANJAS 
@@ -204,10 +218,70 @@ CREATE TABLE calificacion(
         REFERENCES puesto(id_puesto) 
 );
 
+CREATE TABLE detalle_expediente(
+    id_detalle_expediente NUMERIC(10) DEFAULT conteo_id_detalle_expediente.nextval NOT NULL PRIMARY KEY,
+    id_usuario NUMERIC(10) NOT NULL,
+    id_expediente NUMERIC(10) NOT NULL,
+    id_puesto NUMERIC(10) NOT NULL,
+    CONSTRAINT fk_id_usuario_detalle_expediente
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario),
+    CONSTRAINT fk_id_expediente_detalle_expediente
+        FOREIGN KEY (id_expediente)
+        REFERENCES expediente(id_expediente),
+    CONSTRAINT fk_id_detalle_expediente_puesto
+        FOREIGN KEY (id_puesto)
+        REFERENCES puesto(id_puesto)
+);
+
+CREATE TABLE detalle_usuario(
+    id_detalle_usuario NUMERIC(10) DEFAULT conteo_id_detalle_usuario.nextval NOT NULL PRIMARY KEY,
+    id_departamento NUMERIC(10) NOT NULL,
+    id_usuario NUMERIC(10) NOT NULL,
+    CONSTRAINT fk_id_departamento_detalle_usuario
+        FOREIGN KEY (id_departamento)
+        REFERENCES departamento(id_departamento),
+    CONSTRAINT fk_id_usuario_detalle_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario)
+);
+
+CREATE TABLE detalle_revision(
+    id_detalle_revision NUMERIC(10) DEFAULT conteo_id_detalle_revision.nextval NOT NULL PRIMARY KEY,
+    id_usuario NUMERIC(10) NOT NULL,
+    id_expediente NUMERIC(10) NOT NULL,
+    estado_revision NUMERIC(10) NOT NULL,
+    CONSTRAINT fk_id_detalle_revision_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuario(id_usuario),
+    CONSTRAINT fk_id_detalle_revision_expediente
+        FOREIGN KEY (id_expediente)
+        REFERENCES expediente(id_expediente)    
+);
+
 --DATOS DE TABLAS MORADAS
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Pendiente de revision');
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Revisado y rechazado');
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Corregido');
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Aceptado');
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Rechazado');
+INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Aceptado');
+INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Rechazado');
+INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Pendiente de revision');
+INSERT INTO ROL (nombre_rol) VALUES ('Administrador');
+INSERT INTO ROL (nombre_rol) VALUES ('Coordinador de departamento');
+INSERT INTO ROL (nombre_rol) VALUES ('Revisor de expedientes');
+INSERT INTO ROL (nombre_rol) VALUES ('Aplicante');
+INSERT INTO ROL (nombre_rol) VALUES ('Contratado');
+INSERT INTO FORMATO (nombre_formato) VALUES ('txt');
+INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Libre');
+INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Ocupado');
 
 
 
+drop table detalle_revision;
+drop table detalle_usuario;
+drop table detalle_expediente;
 drop table calificacion;
 drop table usuario;
 drop table detalle_documento;
@@ -226,6 +300,8 @@ drop table requisito;
 drop table estado_expediente;
 drop table formato;
 drop table estado_documento;
+drop table estado_puesto;
+
 
 DROP SEQUENCE conteo_estado_documento;
 DROP SEQUENCE conteo_formato;
@@ -244,7 +320,10 @@ DROP SEQUENCE conteo_id_detalle_departamento;
 DROP SEQUENCE conteo_id_detalle_documento;
 DROP SEQUENCE conteo_id_usuario;
 DROP SEQUENCE conteo_id_calificacion;
-
+DROP SEQUENCE conteo_id_detalle_expediente;
+DROP SEQUENCE conteo_id_detalle_usuario;
+DROP SEQUENCE conteo_id_estado_puesto;
+DROP SEQUENCE conteo_id_detalle_revision;
 
 
 

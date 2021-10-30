@@ -1,0 +1,97 @@
+1266
+
+
+sql $USUARIO/$PASS@$DB_HOST:1521/$DB_NAME
+
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
+    </div>
+
+
+https://www.youtube.com/watch?v=Y1wKWIRNthQ
+21:56
+
+Node mailer
+Comenzar con login
+Luego lo de correos
+Luego con carga masiva
+El chat de último
+
+No hay que usar ORM
+
+
+
+create table clima(
+	id_clima SERIAL PRIMARY KEY,
+	temperatura INT,
+	humedad INT,
+	velocidad INT,
+	direccion varchar(10),
+	luz INT,
+	fecha varchar(50),
+	visibilidad varchar(50),
+	velocidad_tipo varchar(50),
+	lluvia varchar(50),
+	calor varchar(50)
+);
+
+
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (12,3,11,'norte',5,'16/10/2021','nublado','alto','sin','sin');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (28,7,15,'sur',6,'17/10/2021','nublado','normal','con','sin');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (32,15,2,'este',7,'18/10/2021','nublado','alto','con','sin');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (17,7,6,'oeste',11,'19/10/2021','nublado','normal','con','con');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (12,3,15,'sur',13,'20/10/2021','despejado','alto','sin','sin');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (38,2,12,'norte',20,'21/10/2021','despejado','normal','sin','con');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (22,5,10,'sur',8,'22/10/2021','despejado','alto','sin','con');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (122,55,101,'oeste',8,'23/10/2021','despejado','normal','sin','con');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (12,45,104,'este',18,'24/10/2021','despejado','alto','sin','sin');
+
+insert into clima (temperatura,humedad,velocidad,direccion,luz,fecha,visibilidad,velocidad_tipo,lluvia,calor)
+values (12,45,104,'este',18,'25/10/2021','despejado','alto','sin','con');
+
+
+
+
+
+Minuto 55:47
+
+
+
+ORACLE
+Auto incrementos de id
+
+create table t1 (
+    c1 NUMBER GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+    c2 VARCHAR2(10)
+    );
