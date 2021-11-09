@@ -17,54 +17,45 @@ function Navigation(props) {
                   props.location.pathname === "/" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/">
-                  Home
+                <Link class="nav-link" to="/inicioGuest">
+                  Inicio
                   <span class="sr-only">(current)</span>
                 </Link>
               </li>
               <li
                 class={`nav-item  ${
-                  props.location.pathname === "/about" ? "active" : ""
+                  props.location.pathname === "/administracion" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/about">
-                  About
-                </Link>
-              </li>
-              <li
-                class={`nav-item  ${
-                  props.location.pathname === "/contact" ? "active" : ""
-                }`}
-              >
-                <Link class="nav-link" to="/contact">
-                  Contact
+                <Link class="nav-link" to="/administracion">
+                  Adminitracion
                 </Link> 
               </li>
               <li
                 class={`nav-item  ${
-                  props.location.pathname === "/formulario" ? "active" : ""
+                  props.location.pathname === "/acexpediente" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/formulario">
-                  Formulario
+                <Link class="nav-link" to="/acexpediente">
+                  Acexpediente
                 </Link> 
               </li>
               <li
                 class={`nav-item  ${
-                  props.location.pathname === "/cargaMasiva" ? "active" : ""
+                  props.location.pathname === "/inicioAplicante" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/cargaMasiva">
-                  Carga Masiva
+                <Link class="nav-link" to="/inicioAplicante">
+                  InicioAplicante
                 </Link> 
               </li>
               <li
                 class={`nav-item  ${
-                  props.location.pathname === "/crearUsuario" ? "active" : ""
+                  props.location.pathname === "/login" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/crearUsuario">
-                  Crear usuario
+                <Link class="nav-link" to="/login">
+                  Login
                 </Link> 
               </li>
             </ul>

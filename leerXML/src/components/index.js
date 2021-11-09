@@ -6,3 +6,16 @@ export { default as Contact } from "./Contact";
 export { default as Formulario} from "./Formulario";
 export { default as CargaMasiva} from "./CargaMasiva";
 export { default as CrearUsuario} from "./CrearUsuario";
+export { default as AdminitracionUsuario} from "./AdminitracionUsuario";
+export { default as AdministracionPlantilla} from "./AdministracionPlantilla";
+export { default as Acexpediente} from "./Acexpediente";
+export { default as Cv} from "./Cv";
+export { default as RequisitosAplicante} from "./RequisitosAplicante";
+export { default as InicioAplicante} from "./InicioAplicante";
+export { default as EditarExpedienteAplicante} from "./EditarExpedienteAplicante";
+export { default as InicioGuest} from "./InicioGuest";
+export { default as RevisionRequisitos} from "./RevisionRequisitos";
+export { default as VerDoc} from "./VerDoc";
+export { default as CorregirDocumentos} from "./CorregirDocumentos"
+export { default as Login} from "./Login";
+export { default as Administracion} from "./Administracion";

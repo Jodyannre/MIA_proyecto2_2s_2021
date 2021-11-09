@@ -73,6 +73,22 @@ async function prueba () {
   };  
 
 
+  async function retornarArchivo (ubicacion) {
+    const formData = new FormData();
+    formData.append("ubicacion", 'doc.pdf');
+    try {
+        const res = await axios.post(
+          "http://localhost:3001/retornarArchivo",
+          formData
+        );
+        //console.log(res);
+        return res;
+      } catch (ex) {
+        console.log(ex);
+      }
+  };  
+
+
 
 
 
@@ -97,6 +113,28 @@ async function prueba () {
       console.error(err.message);
     }
   };
+
+  async function edicionExpediente (datos) {
+    let URL = 'http://localhost:3001/editarExpedienteAplicante';
+    try {
+      axios.get(URL,{
+        params: {
+          dato: datos
+        },
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      })
+      .then((res) => {
+        console.log(res);
+        return res;
+      })  
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  
 
 
 
@@ -152,6 +190,48 @@ async function prueba () {
     }
   };  
 
+  async function asociarDocumentoRequisito (archivo) {
+    let URL = 'http://localhost:3001/asociarDocumentoRequisito';
+    try {
+      axios.get(URL,{
+        params: {
+          dato: archivo
+        },
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      })
+      .then((res) => {
+        console.log(res);
+      })  
+    } catch (err) {
+      console.error(err.message);
+    }
+  };  
+
+
+  async function traerRequisitosAplicante () {
+    let URL = 'http://localhost:3001/enviarRequisitosAplicante';
+    try {
+      axios.get(URL,{
+        params: {
+          nombre: global.login
+        },
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      })
+      .then((res) => {
+        //console.log(res);
+        return res;
+      })  
+    } catch (err) {
+      console.error(err.message);
+    }
+  }; 
+
 
   async function crearDocumento (archivoJson) {
     let URL = 'http://localhost:3001/crearDocumento';
@@ -174,6 +254,60 @@ async function prueba () {
     }
   };
 
+
+
+  async function actualizarDocumento (documento) {
+    let URL = 'http://localhost:3001/actualizarDocumento';
+    try {
+      axios.get(URL,{
+        params: {
+          dato: documento
+        },
+        headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            "Access-Control-Allow-Origin": "*",
+        }
+      })
+      .then((res) => {
+        console.log(res);
+        return res;
+      })  
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+
+    async function crearToken(nombre,password,token){
+      let URL = 'http://localhost:3002/nuevoToken';
+      const user = {
+          user: nombre,
+          password: password,
+          refreshToken: token
+      }
+      try {
+        axios.post(URL,{
+          user: nombre,
+          password: password,
+          refreshToken: token
+          }
+        )
+        .then((res) => {
+            console.log('Autenticacion');
+            //console.log(res.data);
+            return res.data;
+        })  
+      } catch (err) {
+        console.error(err.message);
+      }
+
+  }
+
+
+
+  
+
+
  export {prueba};
  export {crearFormato};
  export {cargarJson};
@@ -183,3 +317,9 @@ async function prueba () {
  export {traerPuestos};
  export {cargarNuevoUsuario};
  export {enviarMail};
+ export {retornarArchivo};
+ export {traerRequisitosAplicante};
+ export {asociarDocumentoRequisito};
+ export {edicionExpediente};
+ export {actualizarDocumento};
+ export {crearToken};

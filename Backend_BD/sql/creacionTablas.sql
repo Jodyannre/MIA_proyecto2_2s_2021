@@ -19,6 +19,8 @@ CREATE SEQUENCE conteo_id_detalle_expediente START WITH 1;
 CREATE SEQUENCE conteo_id_detalle_usuario START WITH 1;
 CREATE SEQUENCE conteo_id_estado_puesto START WITH 1;
 CREATE SEQUENCE conteo_id_detalle_revision START WITH 1;
+CREATE SEQUENCE conteo_id_detalle_requisito_documento START WITH 1;
+CREATE SEQUENCE conteo_detalle_motivo_rechazo START WITH 1;
 
 
 --TABLAS MORADAS
@@ -84,6 +86,7 @@ CREATE TABLE documento (
     ubicacion VARCHAR(200),
     id_formato NUMERIC(10) NOT NULL,
     id_estado_documento NUMERIC(10) NOT NULL,
+    motivo_rechazo VARCHAR(200),
     CONSTRAINT fk_id_formato
         FOREIGN KEY (id_formato)
         REFERENCES formato(id_formato),
@@ -208,7 +211,6 @@ CREATE TABLE usuario (
 CREATE TABLE calificacion(
     id_calificacion NUMERIC(10) DEFAULT conteo_id_calificacion.nextval NOT NULL PRIMARY KEY,
     valor NUMERIC(10) NOT NULL,
-    id_usuario NUMERIC(10) NOT NULL,
     id_puesto NUMERIC(10) NOT NULL,
     CONSTRAINT fk_id_usuario_calificacion
         FOREIGN KEY (id_usuario)
@@ -259,12 +261,38 @@ CREATE TABLE detalle_revision(
         REFERENCES expediente(id_expediente)    
 );
 
+CREATE TABLE detalle_requisito_documento(
+    id_detalle_requisito_documento NUMERIC(10) DEFAULT conteo_id_detalle_requisito_documento.nextval NOT NULL PRIMARY KEY,
+    id_puesto NUMERIC(10) NOT NULL,
+    id_requisito NUMERIC(10) NOT NULL,
+    id_documento NUMERIC(10) NOT NULL,
+    CONSTRAINT fk_id_detalle_requisito_documento_puesto
+        FOREIGN KEY (id_puesto)
+        REFERENCES puesto(id_puesto),
+    CONSTRAINT fk_id_detalle_requisito_documento_requisito
+        FOREIGN KEY (id_requisito)
+        REFERENCES requisito(id_requisito),  
+    CONSTRAINT fk_id_detalle_requisito_documento_documento
+        FOREIGN KEY (id_documento)
+        REFERENCES documento(id_documento)  
+);
+
+CREATE TABLE detalle_motivo_rechazo(
+    id_detalle_motivo_rechazo NUMERIC(10) DEFAULT conteo_detalle_motivo_rechazo.nextval NOT NULL PRIMARY KEY,
+    motivo VARCHAR(300) NOT NULL,
+    id_documento NUMERIC(10),
+    CONSTRAINT fk_detalle_motivo_rechazo_id_documento
+    FOREIGN KEY (id_documento)
+    REFERENCES documento(id_documento) 
+);
+
 --DATOS DE TABLAS MORADAS
 INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Pendiente de revision');
 INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Revisado y rechazado');
 INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Corregido');
 INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Aceptado');
 INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Rechazado');
+INSERT INTO ESTADO_EXPEDIENTE (nombre_estado_expediente) VALUES ('Aprobado');
 INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Aceptado');
 INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Rechazado');
 INSERT INTO ESTADO_DOCUMENTO (nombre_estado_documento) VALUES ('Pendiente de revision');
@@ -276,9 +304,12 @@ INSERT INTO ROL (nombre_rol) VALUES ('Contratado');
 INSERT INTO FORMATO (nombre_formato) VALUES ('txt');
 INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Libre');
 INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Ocupado');
+INSERT INTO USUARIO (id_rol,nombre_usuario,pass_usuario,fecha_inicio,estado_usuario,email)
+VALUES (1,'admin','admin',SYSDATE,1,'jers_033@hotmail.com');
 
+commit;
 
-
+drop table detalle_requisito_documento;
 drop table detalle_revision;
 drop table detalle_usuario;
 drop table detalle_expediente;
@@ -301,7 +332,7 @@ drop table estado_expediente;
 drop table formato;
 drop table estado_documento;
 drop table estado_puesto;
-
+drop table detalle_motivo_rechazo;
 
 DROP SEQUENCE conteo_estado_documento;
 DROP SEQUENCE conteo_formato;
@@ -324,7 +355,7 @@ DROP SEQUENCE conteo_id_detalle_expediente;
 DROP SEQUENCE conteo_id_detalle_usuario;
 DROP SEQUENCE conteo_id_estado_puesto;
 DROP SEQUENCE conteo_id_detalle_revision;
-
-
+DROP SEQUENCE conteo_id_detalle_requisito_documento;
+DROP SEQUENCE conteo_detalle_motivo_rechazo;
 
 

@@ -18,9 +18,12 @@
   "homepage": "https://github.com/Jodyannre/MIA_proyecto2_2s_2021#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "downloadjs": "^1.4.7",
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
+    "nodejs-file-downloader": "^4.7.4",
     "nodemailer": "^6.7.0",
-    "oracledb": "^5.2.0"
+    "oracledb": "^5.2.0",
+    "serve-index": "^1.9.1"
   }
 }

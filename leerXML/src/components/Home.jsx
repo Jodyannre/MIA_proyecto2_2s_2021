@@ -23,6 +23,11 @@ function Home() {
           </div>
         </div>
       </div>
+      <embed 
+                    src='http://localhost:3001/files/sonidoPrueba.mp3' 
+                    width="100%" 
+                    height="100%"
+                    />
     </div>
   );
 }

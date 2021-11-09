@@ -13,6 +13,12 @@
   }
 }
 
+img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:cover;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -45,6 +51,49 @@
   color: #61dafb;
 }
 
+.Div-scroll-historial-usuario {
+  overflow: scroll
+}
+
+.prueba-size{
+  height: 1800px;
+}
+
+.carrusel{
+  align-items: center;
+  width: 500px;
+  height: 400px;
+}
+
+.documento{
+  align-items: center;
+  width: 800px;
+  height: 800px;
+}
+
+.pie{
+  height:100px;
+  background-color: black;
+}
+
+.tablas{
+  align-items: center;
+  width: 1200px;
+  height: 500px;
+}
+.container-imagen{
+  justify-content: end;
+  width: 500px;
+  height: 300px;
+}
+
+.container-imagen img {
+  height: auto;
+  width: auto;
+  margin: 0 auto; /* it centers any block level element */
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -53,3 +102,42 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+/*Para la tabla----------------*/
+:root {
+  font-size: 14px;
+}
+
+.thead,
+tr {
+  background-color: honeydew;
+}
+
+.tr,
+th {
+  white-space: nowrap;
+  padding: 1rem;
+  text-align: left;
+  background-color: honeydew;
+}
+
+tbody,
+tr:nth-child(odd) {
+  background-color: white;
+}
+
+.tbody,
+tr,
+td {
+  white-space: nowrap;
+  width: 20%;
+  overflow-wrap: break-word;
+  padding: 0.5rem;
+}
+
+
+
+
+
