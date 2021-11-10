@@ -13,7 +13,6 @@ import '../App.css';
 const consulta = require('../consultas/consulta');
 
 function AdminitracionUsuario() {
-    const history = useHistory();
     const [validated, setValidated] = useState(false);
     const [show,setShow] = useState(false);
     const [datosPuestos, setDatosPuestos] = useState(null);
@@ -28,13 +27,71 @@ function AdminitracionUsuario() {
     const [id_puesto, setId_puesto] = useState('');
     const [usuarios,setUsuarios] = useState(null);
     const [editado, setEditado] = useState(0);
+    const cookies = document.cookie;
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const tokens = JSON.parse(sessionStorage.getItem('tokens'));
+    const [permisoValidado, setPermisoValidado] = useState(null);
+    const [tokenValidado, setTokenValidado] = useState(null);
+    const [tokenRespuesta, setTokenRespuesta] = useState(null);
+    const [token, setToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(null);
+    const history = useHistory();
 
+    const verCookies = () =>{
+      if (cookies != ''){
+        //Existe mas de alguno
+        let tmp = cookies.split(';');
+        console.log('longitud ',tmp.length);
+        console.log(tmp);
+        if (tmp.length === 1){
+          //Solo existe el de refresco
+          setRefreshToken(tmp[0].replace('refresh=',''));
+          setToken('');
+        }else{
+          setRefreshToken(tmp[1].replace('refresh=',''));
+          setToken(tmp[0].replace('token=',''));          
+        }
+      }else{
+        //No existe ninguno
+        setRefreshToken('');
+        setToken('');
+      }
+    }
+
+    async function crearToken(){
+      let URL = 'http://localhost:3002/nuevoToken';
+      const user = {
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+      }
+      try {
+        axios.post(URL,{
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+          }
+        )
+        .then((res) => {
+            console.log('Autenticacion');
+            console.log(res);
+            setTokenRespuesta(res.data);
+        })  
+      } catch (err) {
+        console.error(err.message);
+      }
+
+    }
 
     async function regresar(){
       setEditar(false);
       setUsuarios(null);
       await traerUsuarios();
       console.log('Regresar');
+    }
+
+    async function regresarInicio(){
+      history.push('/administracion');
     }
 
     const handleClose  = async (event) => {
@@ -197,10 +254,64 @@ function AdminitracionUsuario() {
 
 
     useEffect( async() => { 
-      //Cargar usuarios
-      traerUsuarios();
-      console.log(global.login);
-    }, []);
+  try{
+      //--------------------AUTH---------------------------------------------
+      if (token===null || refreshToken ===null){
+        verCookies();
+      }
+      if (tokenRespuesta){
+        
+        if (document.cookie != ''){
+          document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
+          //actualizar localstorage
+          tokens.token = tokenRespuesta.token;
+          sessionStorage.setItem('tokens',JSON.stringify(tokens));
+          setTokenValidado(true);
+        }else{
+          //setTokenValidado(false);
+          //Sesión no válida
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+
+      }
+      //Validaro tokens
+      if (token==='' && tokenRespuesta===null){
+        //El token expiro pedir otro
+        if (refreshToken!=''){
+            crearToken();
+        }else{
+          //La sesión ya no es válida
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+      }else{
+        setTokenValidado(true);
+      }
+      if (permisoValidado===null){
+        if (1 === usuario.rol){
+          setPermisoValidado(true);
+          console.log('Tiene permiso.');
+        }else{
+          setPermisoValidado(false);
+          //No permitido
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+      }
+      //-----------------------------------------------------------------
+      if (tokenValidado && permisoValidado){
+        //Hacer todo lo de la página   
+        //Cargar usuarios
+        traerUsuarios();  
+      }
+    }catch(error){
+      history.push('/login');
+    }
+    }, [tokenRespuesta,tokenValidado,permisoValidado]);
     
     if (usuarios===null){
       return (
@@ -235,6 +346,11 @@ function AdminitracionUsuario() {
             <div class="col-sm">
               <Button variant="primary" onClick={filtrar}>Filtrar</Button>{' '}
             </div>
+            <div class="col-sm">
+              <Button variant="primary" onClick={()=>(regresarInicio())}>
+                Regresar
+              </Button>  
+            </div>  
           </div>
           <div>
             <Table striped bordered hover>

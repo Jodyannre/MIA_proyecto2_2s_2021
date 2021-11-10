@@ -149,8 +149,8 @@ function Login() {
             let variable = sessionStorage.getItem('tokens');
             //Agregar token a las cookies
             
-            document.cookie = `token=${autenticacion.token}; max-age=${10}; path=/; samesite=strict;`;
-            document.cookie = `refresh=${autenticacion.refreshToken}; max-age=${60}; path=/; samesite=strict;`;
+            document.cookie = `token=${autenticacion.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
+            document.cookie = `refresh=${autenticacion.refreshToken}; max-age=${global.refreshLife}; path=/; samesite=strict;`;
             if (credenciales[2]===4 || credenciales[2]===5 ){
                 // Es un aplicante
                 history.push('/inicioAplicante');

@@ -51,6 +51,7 @@ function AdministracionPlantilla() {
         await traerPlantilla();
       }else {
         await eliminarUsuario();
+        event.preventDefault();
         setEditado(editado+1);
         setUsuarios(null);
         await traerPlantilla();
@@ -149,6 +150,12 @@ function AdministracionPlantilla() {
       setUsuarioEditar(dato);
       setShow(true)
       console.log('dato: ',dato);
+    }
+
+    const regresar = () =>{
+      sessionStorage.removeItem('usuario');
+      sessionStorage.removeItem('tokens');
+      history.push('/login');
     }
 
     const editarNombre = e => {
@@ -284,7 +291,7 @@ function AdministracionPlantilla() {
           console.log("tokenRespuesta");
           console.log(document.cookie);
           if (document.cookie != ''){
-            document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+            document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
             //actualizar localstorage
             tokens.token = tokenRespuesta.token;
             sessionStorage.setItem('tokens',JSON.stringify(tokens));
@@ -331,7 +338,7 @@ function AdministracionPlantilla() {
 
 
       }catch(error){
-        console.log(error);
+        //console.log(error);
         history.push('/login');
       }
       
@@ -373,6 +380,11 @@ function AdministracionPlantilla() {
             </div>
             <div class="col-sm">
               <Button variant="primary" onClick={filtrar}>Filtrar</Button>{' '}
+            </div>
+            <div class="col-sm">
+              <Button variant="primary" value={4} onClick={() =>{regresar()}}>
+                  Salir
+              </Button>
             </div>
           </div>
           <div>

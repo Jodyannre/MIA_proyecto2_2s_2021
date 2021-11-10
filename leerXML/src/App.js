@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Navigation, Footer, Home, About, Contact, Formulario, 
   CargaMasiva, CrearUsuario, AdminitracionUsuario,AdministracionPlantilla, Acexpediente, 
   Cv, RequisitosAplicante,InicioAplicante, EditarExpedienteAplicante, InicioGuest,
-  RevisionRequisitos, VerDoc, CorregirDocumentos, Login, Administracion, VerHistorial } from "./components";
+  RevisionRequisitos, VerDoc, CorregirDocumentos, Login, Administracion, 
+  VerHistorial, Reportes, VerExpedienteAplicante } from "./components";
 
   //global.login = 'CarlogG';
   //6789456218542
@@ -13,6 +14,8 @@ import { Navigation, Footer, Home, About, Contact, Formulario,
   global.expedienteActual = '6789456218542';
   global.Req_ap_anterior = 0;
   global.documentoVer = '';
+  global.tokenLife = 30;
+  global.refreshLife = 2*60;
 
 function App() {
   return (
@@ -38,6 +41,8 @@ function App() {
           <Route path="/corregirDocumentos" exact component ={() => <CorregirDocumentos />} /> 
           <Route path="/administracion" exact component ={() => <Administracion />} /> 
           <Route path="/verHistorial" exact component ={() => <VerHistorial />} /> 
+          <Route path="/reportes" exact component ={() => <Reportes />} /> 
+          <Route path="/verExpedienteAplicante" exact component ={() => <VerExpedienteAplicante />} /> 
 
         </Switch>
         <Footer />

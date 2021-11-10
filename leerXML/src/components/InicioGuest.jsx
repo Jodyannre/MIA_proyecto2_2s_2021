@@ -12,6 +12,7 @@ const FilterableTable = require('react-filterable-table');
 
 let data = [];
 let diccionario = [];
+let puestosSlices = [];
 
 // Fields to show in the table, and what object properties in the data they bind to
 const fields = [
@@ -51,6 +52,7 @@ function InicioGuest() {
       const aplicar  = (id,puesto) => {
         diccionario = [];
         data = [];
+        puestosSlices = [];
         history.push({
           pathname: '/formulario',
           state: { id: id, puesto:puesto}
@@ -132,6 +134,7 @@ function InicioGuest() {
               setPuestosCargados(true);
               //Recorrerlos y contruir la data
               puestos.data.map(dato=>{
+                puestosSlices.push(dato);
                 let nuevo = {
                   salario: <div onClick={()=>{console.log(dato[0]);}}>{dato[3]}</div>,
                   categoria:'',
@@ -162,12 +165,15 @@ function InicioGuest() {
                 }
                 
               });
+              while(puestosSlices.length > 6){
+                puestosSlices.pop();
+              }
           }
  
       }, [puestos,categorias]);
 
 
-      if (puestosCargados===false){
+      if (puestosCargados===false && puestosSlices.length === 0){
         return (
             <div className="container">
               <div class="spinner-border" role="status">
@@ -188,7 +194,7 @@ function InicioGuest() {
                         <div className="carrusel">
                           
                             <Slider {...settings}>
-                                { puestos.data.map(dato=>{
+                                { puestosSlices.map(dato=>{
                                     if(contador < 6){
                                       return(
                                         <div className="container-imagen" onClick={()=>{aplicar(dato[0],dato[1]); setContador(contador+1);}}>

@@ -20,7 +20,6 @@ const download = require("downloadjs");
 
 function RevisionRequisitos() {
     const [usuarios, setUsuarios] = useState(true);
-    const history = useHistory();
     const [show,setShow] = useState(false);
     const [showMotivo,setShowMotivo] = useState(false);
     const [expediente, setExpediente] = useState(null);
@@ -38,6 +37,62 @@ function RevisionRequisitos() {
     const [motivo, setMotivo] = useState(null);
     const [id_documento, setId_documento] = useState(null);
     const [rechazados, setRechazados] = useState(false);
+    const cookies = document.cookie;
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const tokens = JSON.parse(sessionStorage.getItem('tokens'));
+    const [permisoValidado, setPermisoValidado] = useState(null);
+    const [tokenValidado, setTokenValidado] = useState(null);
+    const [tokenRespuesta, setTokenRespuesta] = useState(null);
+    const [token, setToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(null);
+    const history = useHistory();
+
+
+    const verCookies = () =>{
+      if (cookies != ''){
+        //Existe mas de alguno
+        let tmp = cookies.split(';');
+        console.log('longitud ',tmp.length);
+        console.log(tmp);
+        if (tmp.length === 1){
+          //Solo existe el de refresco
+          setRefreshToken(tmp[0].replace('refresh=',''));
+          setToken('');
+        }else{
+          setRefreshToken(tmp[1].replace('refresh=',''));
+          setToken(tmp[0].replace('token=',''));          
+        }
+      }else{
+        //No existe ninguno
+        setRefreshToken('');
+        setToken('');
+      }
+    }
+
+    async function crearToken(){
+      let URL = 'http://localhost:3002/nuevoToken';
+      const user = {
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+      }
+      try {
+        axios.post(URL,{
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+          }
+        )
+        .then((res) => {
+            console.log('Autenticacion');
+            console.log(res);
+            setTokenRespuesta(res.data);
+        })  
+      } catch (err) {
+        console.error(err.message);
+      }
+
+    }
 
 
 
@@ -315,6 +370,58 @@ function RevisionRequisitos() {
     };
 
     useEffect( async() => { 
+
+  try{
+      //--------------------AUTH---------------------------------------------
+      if (token===null || refreshToken ===null){
+        verCookies();
+      }
+      if (tokenRespuesta){
+        
+        if (document.cookie != ''){
+          document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
+          //actualizar localstorage
+          tokens.token = tokenRespuesta.token;
+          sessionStorage.setItem('tokens',JSON.stringify(tokens));
+          setTokenValidado(true);
+        }else{
+          //setTokenValidado(false);
+          //Sesión no válida
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+
+      }
+      //Validaro tokens
+      if (token==='' && tokenRespuesta===null){
+        //El token expiro pedir otro
+        if (refreshToken!=''){
+            crearToken();
+        }else{
+          //La sesión ya no es válida
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+      }else{
+        setTokenValidado(true);
+      }
+      if (permisoValidado===null){
+        if (3 === usuario.rol){
+          setPermisoValidado(true);
+          console.log('Tiene permiso.');
+        }else{
+          setPermisoValidado(false);
+          //No permitido
+          sessionStorage.removeItem('usuario');
+          sessionStorage.removeItem('tokens');
+          history.push('/login');
+        }
+      }
+      //-----------------------------------------------------------------
+      if (tokenValidado && permisoValidado){
+        //Hacer todo lo de la página
         
 
           if (expediente === null && requisitos === null){
@@ -340,7 +447,11 @@ function RevisionRequisitos() {
               console.log(requisitos);
           }
           **/
-      }, [expediente,requisitos]);
+        }
+      }catch(error){
+        history.push('/login');
+      }
+      }, [expediente,requisitos,tokenRespuesta,tokenValidado,permisoValidado]);
 
       if (expediente===null || requisitos===null){
         return (

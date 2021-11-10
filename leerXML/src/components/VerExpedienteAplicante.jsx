@@ -11,10 +11,9 @@ import { InputGroup } from "react-bootstrap";
 const consulta = require('../consultas/consulta');
 
 
-function EditarExpedienteAplicante() {
+function VerExpedienteAplicante() {
     const [expediente, setExpediente] = useState(null);
     const [edicion, setEdicion] = useState(false);
-    const history = useHistory();
     const [validated, setValidated] = useState(false);
     const [nombre,setNombre] = useState('');
     const [apellido,setApellido] = useState('');
@@ -24,6 +23,7 @@ function EditarExpedienteAplicante() {
     const [telefono,setTelefono] = useState('');
     const [cui,setCui] = useState('');
     const location = useLocation();
+    const history = useHistory();
     const cookies = document.cookie;
     const usuario = JSON.parse(sessionStorage.getItem('usuario'));
     const tokens = JSON.parse(sessionStorage.getItem('tokens'));
@@ -33,51 +33,53 @@ function EditarExpedienteAplicante() {
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
 
+
+
+
     async function crearToken(){
-      let URL = 'http://localhost:3002/nuevoToken';
-      const user = {
-          user: usuario.nombre,
-          password: usuario.contraseña,
-          refreshToken: tokens.refresh
-      }
-      try {
-        axios.post(URL,{
-          user: usuario.nombre,
-          password: usuario.contraseña,
-          refreshToken: tokens.refresh
-          }
-        )
-        .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
-            setTokenRespuesta(res.data);
-        })  
-      } catch (err) {
-        console.error(err.message);
-      }
-  }
-
-  const verCookies = () =>{
-    if (cookies != ''){
-      //Existe mas de alguno
-      let tmp = cookies.split(';');
-      console.log('longitud ',tmp.length);
-      console.log(tmp);
-      if (tmp.length === 1){
-        //Solo existe el de refresco
-        setRefreshToken(tmp[0].replace('refresh=',''));
-        setToken('');
-      }else{
-        setRefreshToken(tmp[1].replace('refresh=',''));
-        setToken(tmp[0].replace('token=',''));          
-      }
-    }else{
-      //No existe ninguno
-      setRefreshToken('');
-      setToken('');
+        let URL = 'http://localhost:3002/nuevoToken';
+        const user = {
+            user: usuario.nombre,
+            password: usuario.contraseña,
+            refreshToken: tokens.refresh
+        }
+        try {
+          axios.post(URL,{
+            user: usuario.nombre,
+            password: usuario.contraseña,
+            refreshToken: tokens.refresh
+            }
+          )
+          .then((res) => {
+              console.log('Autenticacion');
+              console.log(res);
+              setTokenRespuesta(res.data);
+          })  
+        } catch (err) {
+          console.error(err.message);
+        }
     }
-  }
-
+  
+    const verCookies = () =>{
+      if (cookies != ''){
+        //Existe mas de alguno
+        let tmp = cookies.split(';');
+        console.log('longitud ',tmp.length);
+        console.log(tmp);
+        if (tmp.length === 1){
+          //Solo existe el de refresco
+          setRefreshToken(tmp[0].replace('refresh=',''));
+          setToken('');
+        }else{
+          setRefreshToken(tmp[1].replace('refresh=',''));
+          setToken(tmp[0].replace('token=',''));          
+        }
+      }else{
+        //No existe ninguno
+        setRefreshToken('');
+        setToken('');
+      }
+    }   
     const handleEdicion = async () => {
         if (expediente[0][8]+1 === 2 
             || expediente[0][8] === 3
@@ -106,7 +108,6 @@ function EditarExpedienteAplicante() {
                 telefono: telefono
             }
             await consulta.edicionExpediente(JSON.stringify(datos));
-            event.preventDefault();
             setValidated(true);
             setExpediente(null);
         }  
@@ -136,7 +137,7 @@ function EditarExpedienteAplicante() {
 
 
     useEffect( async() => {  
-
+    try{
         async function getExpedienteAplicante () {
             let URL = 'http://localhost:3001/getExpedienteAplicante';
             try {
@@ -151,67 +152,72 @@ function EditarExpedienteAplicante() {
               })
               .then((res) => {
                 setExpediente(res.data);
+                console.log(res.data);
               })  
             } catch (err) {
               console.error(err.message);
             }
           };
-      try{
-          //--------------------AUTH---------------------------------------------
+
+
+        //--------------------AUTH---------------------------------------------
         if (token===null || refreshToken ===null){
-          verCookies();
+            verCookies();
         }
         if (tokenRespuesta){
-          
-          if (document.cookie != ''){
+            
+            if (document.cookie != ''){
             document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
             //actualizar localstorage
             tokens.token = tokenRespuesta.token;
             sessionStorage.setItem('tokens',JSON.stringify(tokens));
             setTokenValidado(true);
-          }else{
+            }else{
             //setTokenValidado(false);
             //Sesión no válida
             sessionStorage.removeItem('usuario');
             sessionStorage.removeItem('tokens');
             history.push('/login');
-          }
+            }
 
         }
         //Validaro tokens
         if (token==='' && tokenRespuesta===null){
-          //El token expiro pedir otro
-          if (refreshToken!=''){
-              crearToken();
-          }else{
+            //El token expiro pedir otro
+            if (refreshToken!=''){
+                crearToken();
+            }else{
             //La sesión ya no es válida
             sessionStorage.removeItem('usuario');
             sessionStorage.removeItem('tokens');
             history.push('/login');
-          }
+            }
         }else{
-          setTokenValidado(true);
+            setTokenValidado(true);
         }
         if (permisoValidado===null){
-          if (4 === usuario.rol){
+            if (4 === usuario.rol || 5 === usuario.rol){
             setPermisoValidado(true);
             console.log('Tiene permiso.');
-          }else{
+            }else{
             setPermisoValidado(false);
             //No permitido
             sessionStorage.removeItem('usuario');
             sessionStorage.removeItem('tokens');
             history.push('/login');
-          }
+            }
         }
-      //-----------------------------------------------------------------
-      if (tokenValidado && permisoValidado){
+        //-----------------------------------------------------------------
+        if (tokenValidado && permisoValidado){                              
+
 
           if (expediente === null){
+            console.log('Expediente es null')
             await getExpedienteAplicante();
-          }else{
+            setEdicion(sessionStorage.getItem('usuario'));
+          }
+          if (expediente){
               //Configurar los valores el expediente
-              console.log(expediente);
             handleEdicion();
             setCui(expediente[0][1]);
             setNombre(expediente[0][2]);
@@ -220,10 +226,10 @@ function EditarExpedienteAplicante() {
             setDireccion(expediente[0][5]);
             setTelefono(expediente[0][6]);
           }
-      }
-    }catch(error){
-      history.push('/login');
-    }  
+        }
+        }catch(error){
+            history.push('/login');
+        }     
       }, [expediente,tokenRespuesta,tokenValidado,permisoValidado]);
     
     if (expediente === null){
@@ -234,12 +240,11 @@ function EditarExpedienteAplicante() {
               </div>
             </div>
             );
-    }else
-    {
+    }else if (expediente){
         return (
             <div class="row justify-content-md-center"> 
             <div className='Formulario-expediente'>
-                <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                <Form noValidate validated={validated} onSubmit={()=>{handleSubmit()}}>
                     <Row className="mb-3">
                     <Form.Group as={Col} md="4" controlId="validationCustom01">
                         <Form.Label>Nombres</Form.Label>
@@ -248,6 +253,7 @@ function EditarExpedienteAplicante() {
                         type="text"
                         placeholder="Nombre"
                         value={nombre}
+                        disabled
                         onChange={cambioNombre}
                         />
                         <Form.Control.Feedback></Form.Control.Feedback>
@@ -259,6 +265,7 @@ function EditarExpedienteAplicante() {
                         type="text"
                         placeholder="Apellido"
                         value={apellido}
+                        disabled
                         onChange= {cambioApellido}
                         />
                         <Form.Control.Feedback></Form.Control.Feedback>
@@ -273,6 +280,7 @@ function EditarExpedienteAplicante() {
                             aria-describedby="inputGroupPrepend"
                             required
                             value={email}
+                            disabled
                             onChange= {cambioEmail}
                         />
                         <Form.Control.Feedback type="invalid">
@@ -289,6 +297,7 @@ function EditarExpedienteAplicante() {
                         placeholder="Dirección" 
                         required 
                         value={direccion}
+                        disabled
                         onChange= {cambioDireccion}
                         />
                         <Form.Control.Feedback type="invalid">
@@ -302,6 +311,7 @@ function EditarExpedienteAplicante() {
                         placeholder="Teléfono" 
                         required 
                         value={telefono}
+                        disabled
                         onChange= {cambioTelefono}
                         />
                         <Form.Control.Feedback type="invalid">
@@ -322,14 +332,13 @@ function EditarExpedienteAplicante() {
                         </Form.Control.Feedback>
                     </Form.Group>
                     </Row>
-                    <Button type="submit">Guardar cambios</Button>
                     <Button onClick={()=>{regresar()}}>Regresar</Button>
                 </Form>       
                 </div>
                 </div>
-        ); 
+        );        
     }
 }
 
 
-export default EditarExpedienteAplicante;
+export default VerExpedienteAplicante;

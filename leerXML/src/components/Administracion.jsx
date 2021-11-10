@@ -35,6 +35,11 @@ function Administracion() {
             history.push('/cargaMasiva');
         }
     };
+    const regresar = () =>{
+        sessionStorage.removeItem('usuario');
+        sessionStorage.removeItem('tokens');
+        history.push('/login');
+    }
 
 
     async function crearToken(){
@@ -86,11 +91,13 @@ function Administracion() {
     useEffect( async() => {  
         try{  
             //--------------------AUTH---------------------------------------------
-            verCookies();
+            if (token===null || refreshToken ===null){
+                verCookies();
+              }
             if (tokenRespuesta){
             
             if (document.cookie != ''){
-                document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+                document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
                 //actualizar localstorage
                 tokens.token = tokenRespuesta.token;
                 sessionStorage.setItem('tokens',JSON.stringify(tokens));
@@ -171,6 +178,11 @@ function Administracion() {
                 onClick={handleClick}
                 >
                 Carga de datos
+            </Button>
+            </Col>
+            <Col md>
+            <Button variant="primary" value={4} onClick={() =>{regresar()}}>
+                Salir
             </Button>
             </Col>
             </Row>

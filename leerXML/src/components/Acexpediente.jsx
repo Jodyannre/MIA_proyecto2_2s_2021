@@ -57,14 +57,16 @@ function Acexpediente() {
         await traerExpediente();        
       }else if (event.target.value === '3') {
         //Ver CV
-        global.cvFormato = usuarioSeleccionado[13];
-        global.cvUbicacion = usuarioSeleccionado[11];
+        //global.cvFormato = usuarioSeleccionado[13];
+        //global.cvUbicacion = usuarioSeleccionado[11];
+        console.log(usuarioSeleccionado);
         //console.log(global.cvFormato);
         //console.log(global.cvUbicacion);
         history.push({
           pathname: '/Cv',
           search: '?query=abc',
-          state: { expediente: usuarioSeleccionado[0],ubicacion:usuarioSeleccionado[11]}    
+          state: { expediente: usuarioSeleccionado[0],ubicacion:usuarioSeleccionado[11],
+          rol:3, formato:usuarioSeleccionado[13]}    
       });
         //setUsuarios(null);
         //await traerExpediente();
@@ -277,6 +279,12 @@ function Acexpediente() {
       }
     };
 
+    const regresar = () =>{
+      sessionStorage.removeItem('usuario');
+      sessionStorage.removeItem('tokens');
+      history.push('/login');
+    }
+
     const handleEditar = async (event) => {
       //event.preventDefault();
       setEditar(false);
@@ -313,7 +321,7 @@ function Acexpediente() {
     }
 
     const handleOpcionFiltro = e => {
-      setOpcionFiltro(e.target.value);
+      setOpcionFiltro(parseInt(e.target.value, 10));
       console.log(e.target.value);
     };
 
@@ -386,11 +394,13 @@ function Acexpediente() {
 
       try{
       //--------------------AUTH---------------------------------------------
-        verCookies();
+        if (token===null || refreshToken ===null){
+          verCookies();
+        }
         if (tokenRespuesta){
           
           if (document.cookie != ''){
-            document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+            document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
             //actualizar localstorage
             tokens.token = tokenRespuesta.token;
             sessionStorage.setItem('tokens',JSON.stringify(tokens));
@@ -419,7 +429,7 @@ function Acexpediente() {
           setTokenValidado(true);
         }
         if (permisoValidado===null){
-          if (2 === usuario.rol){
+          if (3 === usuario.rol){
             setPermisoValidado(true);
             console.log('Tiene permiso.');
           }else{
@@ -438,7 +448,7 @@ function Acexpediente() {
         }
       }
       }catch(error){
-        console.log(error);
+        //console.log(error);
         history.push('/login');
       }
     }, [usuarios,tokenRespuesta,tokenValidado,permisoValidado]);
@@ -473,6 +483,9 @@ function Acexpediente() {
             </div>
             <div class="col-sm">
               <Button variant="primary" onClick={filtrar}>Filtrar</Button>{' '}
+              <Button variant="primary" value={4} onClick={() =>{regresar()}}>
+                Salir
+            </Button>
             </div>
           </div>
           <div>

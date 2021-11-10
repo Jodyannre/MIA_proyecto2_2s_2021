@@ -1170,7 +1170,8 @@ begin
 end;
 
 
-
+select * from documento;
+select * from detalle_revision;
 
 --Conseguir revisor desocupado
 SELECT id_usuario FROM
@@ -1188,7 +1189,7 @@ SELECT id_usuario, nombre_usuario, estado_usuario,
         ON a.id_usuario = b.id_usuario
         WHERE a.id_rol = 3 AND a.estado_usuario = 1
         GROUP BY a.id_usuario,a.nombre_usuario,a.estado_usuario,
-        b.id_detalle_revision,b.id_expediente,b.estado_revision
+        b.id_detalle_revision,b.id_expediente,b.estado_revision;
     )
     GROUP BY
     id_usuario, nombre_usuario, estado_usuario 
@@ -1197,7 +1198,7 @@ SELECT id_usuario, nombre_usuario, estado_usuario,
     )
 ;
 
-
+select * from puesto;
 
 
 -------CREAR MOTIVO
@@ -1228,6 +1229,169 @@ END;
 
 
 
+--REPORTE 1 con cursores
+set serveroutput on;
+create or replace procedure reportePlantilla(
+opcion_in IN NUMBER,
+id_departamento_in IN NUMBER,
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+    IF (opcion_in = 1) THEN --No es global
+        OPEN cursor_out FOR
+        --Seleccionar todos los usuarios contratados por cierto departamento
+        SELECT a.id_usuario, a.id_rol,a.nombre_usuario,TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio,a.id_puesto,
+        b.nombre_puesto,b.salario, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.id_puesto IS NOT NULL 
+        AND a.estado_usuario = 1
+        AND d.id_departamento = id_departamento_in;
+    ELSIF (opcion_in = 0) THEN-- es global
+        OPEN cursor_out FOR
+        --Seleccionar todos los usuarios contratados activos
+        SELECT a.id_usuario, a.id_rol,a.nombre_usuario,TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio,a.id_puesto,
+        b.nombre_puesto,b.salario, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.id_puesto IS NOT NULL 
+        AND a.estado_usuario = 1;
+    END IF;
+END;
 
-select * from documento;
+
+
+
+
+--REPORTE 2 con cursores
+set serveroutput on;
+create or replace procedure reporteDepartamentos(
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+        OPEN cursor_out FOR
+SELECT COUNT(d.id_departamento) as contador, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.id_puesto IS NOT NULL 
+        AND a.estado_usuario = 1
+        GROUP BY d.nombre_departamento
+        ORDER BY contador DESC
+FETCH FIRST 5 ROWS ONLY;
+END;
+
+
+
+
+
+
+--Top 5 departamentos con más empleados
+SELECT COUNT(d.id_departamento) as contador, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.id_puesto IS NOT NULL 
+        AND a.estado_usuario = 1
+        GROUP BY d.nombre_departamento
+        ORDER BY contador DESC
+FETCH FIRST 5 ROWS ONLY;
+
+
+
+
+
+
+--Top 5 reclutadores con mas invitaciones
+
+SELECT b.id_usuario, b.nombre_usuario, COUNT(a.id_usuario) as contador from detalle_revision a
+INNER JOIN USUARIO b
+ON a.id_usuario = b.id_usuario
+GROUP BY b.id_usuario, b.nombre_usuario
+ORDER BY contador DESC
+FETCH FIRST 5 ROWS ONLY
+;
+
+--Top 5 usuarios con más documentos rechazados
+
+SELECT  COUNT(c.id_expediente) as contador, e.nombre_usuario,d.nombres,d.apellidos FROM DETALLE_MOTIVO_RECHAZO a
+INNER JOIN DOCUMENTO b
+ON a.id_documento = b.id_documento
+INNER JOIN DETALLE_DOCUMENTO c
+ON c.id_documento = b.id_documento
+INNER JOIN EXPEDIENTE d
+ON d.id_expediente = c.id_expediente
+INNER JOIN USUARIO e
+ON e.id_expediente = c.id_expediente
+GROUP BY e.nombre_usuario,d.nombres,d.apellidos
+ORDER BY contador DESC
+FETCH FIRST 5 ROWS ONLY
+;
+
+--mayor gasto
+
+SELECT SUM(b.salario) as total, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+INNER JOIN PUESTO b
+ON a.id_puesto = b.id_puesto
+INNER JOIN DETALLE_PUESTO c
+ON c.id_puesto = b.id_puesto
+INNER JOIN DEPARTAMENTO d
+ON d.id_departamento = c.id_departamento
+WHERE a.estado_usuario = 1
+AND a.id_puesto is not null
+GROUP BY d.id_departamento, d.nombre_departamento
+ORDER BY total DESC
+FETCH FIRST 5 ROWS ONLY
+;
+
+--Mayor salario
+SELECT b.nombre_puesto, b.salario, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+INNER JOIN PUESTO b
+ON a.id_puesto = b.id_puesto
+INNER JOIN DETALLE_PUESTO c
+ON c.id_puesto = b.id_puesto
+INNER JOIN DEPARTAMENTO d
+ON d.id_departamento = c.id_departamento
+WHERE a.estado_usuario = 1
+AND a.id_puesto is not null
+ORDER BY b.salario DESC
+FETCH FIRST 1 ROWS ONLY
+;
+
+select * from rol;
+
+
+select * from detalle_documento;
+
+ declare 
+   myrefcur sys_refcursor;
+   id_puesto NUMBER;
+   nombre_puesto VARCHAR2(500);
+ begin
+    reporte1(-1,myrefcur);
+   reporte1(-1,myrefcur);
+   loop
+     fetch myrefcur into id_puesto,nombre_puesto;
+     exit when myrefcur%notfound;
+     dbms_output.put_line(nombre_puesto);
+     dbms_output.put_line(id_puesto);
+   end loop;
+   close myrefcur;
+ end;
 

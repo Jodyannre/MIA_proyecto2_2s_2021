@@ -26,6 +26,7 @@ function InicioAplicante() {
     const [tokenRespuesta, setTokenRespuesta] = useState(null);
     const [token, setToken] = useState(null);
     const [refreshToken, setRefreshToken] = useState(null);
+    
 
     //Si hay cargados y hay rechazados activar la edición
     //Si hay cargados y no rechazados desactivar la edición y la carga
@@ -66,11 +67,14 @@ function InicioAplicante() {
       //console.log(documentosCargados);
       //console.log(documentosRechazados);
       if (documentosCargados && documentosRechazados){
-        if (expediente[0][8]+1 === 2 
+        if (expediente[0][8] === 2 
             || expediente[0][8] === 3
             || expediente[0][8] === 6){
-                //console.log('El expediente se puede revisar');
                 setEdicion(true);
+                sessionStorage.setItem('editar',true);
+                console.log('Se puede editar');
+            }else{
+              sessionStorage.setItem('editar',false);
             }
         if (documentosRechazados.length > 0){
           //Quiere decir que hay que corregir los documentos
@@ -81,8 +85,13 @@ function InicioAplicante() {
           setBotonDocumentos(false);
         }else{
           //Ambas son 0 y entonces se activa la función de subir todos los documentos
-          setCorregirDocumentos(0);
-          setBotonDocumentos(true);
+          if (usuario.rol === 5){
+            setBotonDocumentos(false);
+          }else{
+            setCorregirDocumentos(0);
+            setBotonDocumentos(true);
+          }
+
         }
       }
     }
@@ -96,14 +105,12 @@ function InicioAplicante() {
             if (edicion){
               history.push({
                 pathname: '/editarExpedienteAplicante',
-                search: '?query=abc',
-                state: { corregir:edicion}    
+                state: { corregir:edicion, rol:usuario.rol}    
               });
             }else{
               history.push({
-                pathname: '/editarExpedienteAplicante',
-                search: '?query=abc',
-                state: { corregir:edicion}    
+                pathname: '/verExpedienteAplicante',
+                state: { corregir:edicion,rol:usuario.rol}    
               });              
             }
 
@@ -114,13 +121,11 @@ function InicioAplicante() {
             if (corregirDocumentos === 0){
               history.push({
                 pathname: '/requisitosAplicante',
-                search: '?query=abc',
                 state: { corregir:corregirDocumentos}    
               });
             }else if (corregirDocumentos ===1){
               history.push({
                 pathname: '/corregirDocumentos',
-                search: '?query=abc',
                 state: { corregir:corregirDocumentos, expediente: expediente[0][1]+''}    
               });
             }
@@ -202,17 +207,19 @@ function InicioAplicante() {
         console.error(err.message);
       }
 
-  }
+    }
 
 
 
     useEffect( async() => {  
       try{
-        verCookies();
+        if (token===null || refreshToken ===null){
+          verCookies();
+        }
         if (tokenRespuesta){
           
           if (document.cookie != ''){
-            document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+            document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
             //actualizar localstorage
             tokens.token = tokenRespuesta.token;
             sessionStorage.setItem('tokens',JSON.stringify(tokens));
@@ -245,7 +252,7 @@ function InicioAplicante() {
 
 
         if (permisoValidado===null){
-          if (4 === usuario.rol){
+          if (4 === usuario.rol || 5 === usuario.rol){
             setPermisoValidado(true);
             console.log('Tiene permiso.');
           }else{
@@ -291,7 +298,7 @@ function InicioAplicante() {
             }
           }
       }catch (error){
-        console.log(error);
+        //console.log(error);
         history.push('/login');
       }
           

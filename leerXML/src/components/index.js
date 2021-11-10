@@ -20,3 +20,5 @@ export { default as CorregirDocumentos} from "./CorregirDocumentos"
 export { default as Login} from "./Login";
 export { default as Administracion} from "./Administracion";
 export { default as VerHistorial} from "./VerHistorial";
+export { default as Reportes} from "./Reportes";
+export { default as VerExpedienteAplicante} from "./VerExpedienteAplicante";

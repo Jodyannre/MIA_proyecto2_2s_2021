@@ -146,6 +146,259 @@ async function crearFormato(nombre_formato,connection) {
 }
 
 
+
+async function reportePlantilla(opcion_in,id_departamento,connection) {
+  const arraySalida = [];
+  console.log('Opciones del reporte');
+  console.log(opcion_in);
+  console.log(id_departamento);
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reportePlantilla(:opcion,:departamento,:cursor);
+        END;`,
+      {
+       opcion: opcion_in,
+       departamento: id_departamento,
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida;
+}
+
+
+
+
+async function reporteDepartamentos(connection) {
+  const arraySalida = [];
+  console.log('Reporte de departamentos-------------');
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reporteDepartamentos(:cursor);
+        END;`,
+      {
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida[0]);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida[0];
+}
+
+
+
+async function reporteReclutadores(connection) {
+  const arraySalida = [];
+  console.log('Reporte de reclutadores-------------');
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reporteReclutadores(:cursor);
+        END;`,
+      {
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida[0]);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida[0];
+}
+
+
+
+
+async function reporteAplicantes(connection) {
+  const arraySalida = [];
+  console.log('Reporte de Aplicantes-------------');
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reporteAplicantes(:cursor);
+        END;`,
+      {
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida[0]);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida[0];
+}
+
+
+
+async function reporteCapital(connection) {
+  const arraySalida = [];
+  console.log('Reporte de Capital-------------');
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reporteCapital(:cursor);
+        END;`,
+      {
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida[0]);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida[0];
+}
+
+
+
+async function reporteSalario(connection) {
+  const arraySalida = [];
+  console.log('Reporte de Salario-------------');
+  try {
+      const resultado = await connection.execute(
+        `BEGIN
+          reporteSalario(:cursor);
+        END;`,
+      {
+       cursor: { type: oracledb.CURSOR, dir: oracledb.BIND_OUT }
+      }
+      );
+      connection.commit();
+      //console.log("Cursor metadata:");
+      //console.log(resultado.outBinds.cursor.metaData);
+
+      const resultSet = resultado.outBinds.cursor;
+      const numRows = 10;  // numero de filas, por problemas de memoria de 10 en 10
+      let rows;
+  
+      do {
+        rows = await resultSet.getRows(numRows); 
+        if (rows.length > 0) {
+          arraySalida.push(rows);
+          //console.log(rows);
+        }
+      } while (rows.length === numRows);
+  
+      await resultSet.close();
+      console.log(arraySalida[0]);
+
+    } catch (err) {
+      console.error(err);
+    } finally {
+
+    }
+    return arraySalida[0];
+}
+
+
 async function crearCategoria(nombre_categoria,connection) {
   try {
       const resultado = await connection.execute(
@@ -1080,7 +1333,8 @@ async function enviarRequisitosAplicante(nombre_aplicante, connection){
       `
     );
     connection.commit();
-    //console.log(resultado.rows);
+    console.log('Requisitos del aplicante')
+    console.log(resultado.rows);
     return resultado.rows;
   } catch (err) {
     console.error(err);
@@ -1113,6 +1367,25 @@ async function getDepartamento(dato,connection){
 }
 
 
+async function getDepartamentos(connection){
+  try {
+    const resultado = await connection.execute(
+      `
+      SELECT * from Departamento
+      `
+    );
+    connection.commit();
+    console.log('Enviar todos los departamentos');
+    console.log(resultado.rows);
+    return resultado.rows;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    
+  }  
+}
+
+
 async function getCredenciales(dato,connection){
   try {
     const resultado = await connection.execute(
@@ -1132,8 +1405,39 @@ async function getCredenciales(dato,connection){
 async function getHistorial(id_documento,connection){
   try {
     const resultado = await connection.execute(
-      `SELECT * from DETALLE_MOTIVO_RECHAZO 
-      WHERE ID_DOCUMENTO = ${id_documento}`);
+      `SELECT id_detalle_motivo_rechazo,motivo,
+      id_documento,TO_CHAR(fecha, 'DD-MM-YYYY') as fecha from DETALLE_MOTIVO_RECHAZO 
+      WHERE ID_DOCUMENTO = ${id_documento}
+      ORDER BY id_detalle_motivo_rechazo
+      `);
+    connection.commit();
+    //console.log(resultado.rows);
+    return resultado.rows;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    
+  }  
+}
+
+
+async function reporteMasEmpleados(connection){
+  try {
+    const resultado = await connection.execute(
+      `
+      SELECT COUNT(d.id_departamento) as contador, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.id_puesto IS NOT NULL 
+        AND a.estado_usuario = 1
+        GROUP BY d.nombre_departamento
+        ORDER BY contador DESC
+        FETCH FIRST 5 ROWS ONLY
+      `);
     connection.commit();
     //console.log(resultado.rows);
     return resultado.rows;
@@ -1222,7 +1526,8 @@ async function getExpedienteAplicante(dato,connection){
       `SELECT * FROM EXPEDIENTE 
       WHERE cui = '${dato}'`);
     connection.commit();
-    //console.log(resultado.rows);
+    console.log('Expediente aplicante')
+    console.log(resultado.rows);
     return resultado.rows;
   } catch (err) {
     console.error(err);
@@ -1305,6 +1610,8 @@ async function editarExpediente(dato,connection) {
 
 
 async function eliminarUsuario(dato,connection) {
+  console.log('Eliminar usuario')
+  console.log(dato);
   try {
       const resultado = await connection.execute(
         `BEGIN
@@ -1331,7 +1638,7 @@ async function filtroNombreUsuario(connection,nombre){
     const resultado = await connection.execute(
       `select nombre_usuario as nombre, estado_usuario as estado,
       TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email 
+      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email, a.id_puesto 
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
@@ -1699,7 +2006,7 @@ async function filtroEstadoUsuario(connection,dato){
     const resultado = await connection.execute(
       `select nombre_usuario as nombre, estado_usuario as estado,
       TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email 
+      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email, a.id_usuario 
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
@@ -1721,7 +2028,7 @@ async function filtroInicioUsuario(connection,fecha){
     const resultado = await connection.execute(
       `select nombre_usuario as nombre, estado_usuario as estado,
       TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email 
+      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email,a.id_usuario  
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
@@ -1743,7 +2050,7 @@ async function filtroFinUsuario(connection,fecha){
     const resultado = await connection.execute(
       `select nombre_usuario as nombre, estado_usuario as estado,
       TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email 
+      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email ,a.id_usuario
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
@@ -1765,7 +2072,7 @@ async function filtroRolUsuario(connection,rol){
     const resultado = await connection.execute(
       `select nombre_usuario as nombre, estado_usuario as estado,
       TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email
+      nombre_rol as rol,id_usuario, pass_usuario as contraseña, email,a.id_usuario
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
@@ -1808,7 +2115,7 @@ async function asociarUsuario(cui_in,salario_in,departamento_in,puesto_in,connec
 }
 
 
-async function enviarEmail(email) {
+async function enviarEmail(usuario,email) {
   // create reusable transporter object using the default SMTP transport
   /*
     let transporter = nodemailer.createTransport({
@@ -1833,7 +2140,7 @@ async function enviarEmail(email) {
       from: 'miaproyecto2021@gmail.com',
       to: email,
       subject: 'Nueva asignacion',
-      text: 'Se le espera mañana para la revisión de un nuevo expediente que le fue asignado.'
+      text: `Revisor ${usuario} se le espera mañana para la revisión de un nuevo expediente que le fue asignado.`
     };
 
     transporter.sendMail(mailOptions, function(error, info){
@@ -2004,3 +2311,11 @@ async function enviarEmailAprobacion(email,usuario,pass) {
   module.exports.actualizarCalificacion = actualizarCalificacion;
   module.exports.crearMotivo = crearMotivo;
   module.exports.getHistorial = getHistorial;
+  module.exports.reportePlantilla = reportePlantilla;
+  module.exports.getDepartamentos = getDepartamentos;
+  module.exports.reporteMasEmpleados = reporteMasEmpleados;
+  module.exports.reporteDepartamentos = reporteDepartamentos;
+  module.exports.reporteReclutadores = reporteReclutadores;
+  module.exports.reporteAplicantes = reporteAplicantes;
+  module.exports.reporteCapital = reporteCapital;
+  module.exports.reporteSalario = reporteSalario;

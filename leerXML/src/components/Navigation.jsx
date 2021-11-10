@@ -18,9 +18,18 @@ function Navigation(props) {
                 }`}
               >
                 <Link class="nav-link" to="/inicioGuest">
-                  Inicio
+                  Guest
                   <span class="sr-only">(current)</span>
                 </Link>
+              </li>
+              <li
+                class={`nav-item  ${
+                  props.location.pathname === "/login" ? "active" : ""
+                }`}
+              >
+                <Link class="nav-link" to="/login">
+                  Login
+                </Link> 
               </li>
               <li
                 class={`nav-item  ${
@@ -37,7 +46,16 @@ function Navigation(props) {
                 }`}
               >
                 <Link class="nav-link" to="/acexpediente">
-                  Acexpediente
+                  Revisión
+                </Link> 
+              </li>
+              <li
+                class={`nav-item  ${
+                  props.location.pathname === "/administracionPlantilla" ? "active" : ""
+                }`}
+              >
+                <Link class="nav-link" to="/administracionPlantilla">
+                  Coordinación
                 </Link> 
               </li>
               <li
@@ -49,13 +67,14 @@ function Navigation(props) {
                   InicioAplicante
                 </Link> 
               </li>
+
               <li
                 class={`nav-item  ${
-                  props.location.pathname === "/login" ? "active" : ""
+                  props.location.pathname === "/reportes" ? "active" : ""
                 }`}
               >
-                <Link class="nav-link" to="/login">
-                  Login
+                <Link class="nav-link" to="/reportes">
+                  Reportes
                 </Link> 
               </li>
             </ul>

@@ -41,6 +41,126 @@ router.get('/cargarExpediente', async function (req, res, next) {
 
 
 
+router.get('/reportePlantilla', async function (req, res, next) {
+  let dato = JSON.parse(req.query.dato);
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const arraySalida = await consulta.reportePlantilla(dato.opcion,dato.departamento,conexion);
+  console.log('Listo el primer o segundo reporte');
+  if (conexion) {
+    try {
+      await conexion.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(arraySalida);
+});
+
+router.get('/reporteMasEmpleados', async function (req, res, next) {
+
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const arraySalida = await consulta.reporteMasEmpleados(conexion);
+  console.log('Listo el segundo reporte');
+  if (conexion) {
+    try {
+      await conexion.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(arraySalida);
+});
+
+
+
+router.get('/reporteDepartamentos', async function (req, res, next) {
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const arraySalida = await consulta.reporteDepartamentos(conexion);
+  console.log('Listo el tercer reporte');
+  if (conexion) {
+    try {
+      await conexion.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(arraySalida);
+});
+
+
+router.get('/reporteReclutadores', async function (req, res, next) {
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const arraySalida = await consulta.reporteReclutadores(conexion);
+  console.log('Listo el cuarto reporte');
+  if (conexion) {
+    try {
+      await conexion.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(arraySalida);
+});
+
+
+router.get('/demasReportes', async function (req, res, next) {
+  let dato = JSON.parse(req.query.dato);
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  switch(dato.opcion){
+    case 4:
+      const arraySalida4 = await consulta.reporteReclutadores(conexion);
+      console.log('Listo el cuarto reporte');
+      if (conexion) {
+        try {
+          await conexion.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      res.send(arraySalida4);
+      break;
+    case 5:
+      const arraySalida5 = await consulta.reporteAplicantes(conexion);
+      console.log('Listo el quinto reporte');
+      if (conexion) {
+        try {
+          await conexion.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      res.send(arraySalida5);
+      break;
+    case 6:
+      const arraySalida6 = await consulta.reporteCapital(conexion);
+      console.log('Listo el sexto reporte');
+      if (conexion) {
+        try {
+          await conexion.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      res.send(arraySalida6);
+      break;
+    case 7:
+      const arraySalida7 = await consulta.reporteSalario(conexion);
+      console.log('Listo el setptimo reporte');
+      if (conexion) {
+        try {
+          await conexion.close();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+      res.send(arraySalida7);
+      break;
+  }
+
+});
+
+
+
 router.get('/cargarUsuario', async function (req, res, next) {
   //console.log(JSON.parse(req.query.dato));
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
@@ -207,6 +327,23 @@ router.get('/enviarPlantilla', async function (req, res, next) {
     }
   }
   res.send(segundos);
+});
+
+
+
+router.get('/getDepartamentos', async function (req, res, next) {
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const resultado = await consulta.getDepartamentos(conexion); 
+  if (conexion) {
+    try {
+      const tercera = setTimeout(() => {
+        conexion.close();
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(resultado);
 });
 
 
@@ -618,7 +755,7 @@ router.get('/enviarMail', async function (req, res, next) {
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
   const email = await consulta.enviarUsuarioRevision(conexion);
   console.log(email);
-  const enviar = await consulta.enviarEmail(email[0][2]);
+  const enviar = await consulta.enviarEmail(email[0][1],email[0][2]);
   if (conexion) {
     try {
       await conexion.close();
