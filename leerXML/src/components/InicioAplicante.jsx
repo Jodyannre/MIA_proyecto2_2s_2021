@@ -19,8 +19,8 @@ function InicioAplicante() {
     const [documentosCargados, setDocumentosCargados] = useState(null);
     const [documentosRechazados, setDocumentosRechazados] = useState(null);
     const cookies = document.cookie;
-    const usuario = JSON.parse(localStorage.getItem('usuario'));
-    const tokens = JSON.parse(localStorage.getItem('tokens'));
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const tokens = JSON.parse(sessionStorage.getItem('tokens'));
     const [permisoValidado, setPermisoValidado] = useState(null);
     const [tokenValidado, setTokenValidado] = useState(null);
     const [tokenRespuesta, setTokenRespuesta] = useState(null);
@@ -34,8 +34,8 @@ function InicioAplicante() {
 
 
     async function regresar(){
-      localStorage.removeItem('usuario');
-      localStorage.removeItem('tokens');
+      sessionStorage.removeItem('usuario');
+      sessionStorage.removeItem('tokens');
       history.push('/login');
     }
 
@@ -134,7 +134,7 @@ function InicioAplicante() {
     async function getDocumentosCargados () {
       let URL = 'http://localhost:3001/enviarDocumentosCargados';
       const dato = {
-        cui: (JSON.parse(localStorage.getItem('usuario'))).nombre
+        cui: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
       }
       try {
         axios.get(URL,{
@@ -158,7 +158,7 @@ function InicioAplicante() {
     async function getDocumentosRechazados () {
       let URL = 'http://localhost:3001/enviarDocumentosRechazados';
       const dato = {
-        cui: (JSON.parse(localStorage.getItem('usuario'))).nombre
+        cui: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
       }
       try {
         axios.get(URL,{
@@ -215,13 +215,13 @@ function InicioAplicante() {
             document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
             //actualizar localstorage
             tokens.token = tokenRespuesta.token;
-            localStorage.setItem('tokens',JSON.stringify(tokens));
+            sessionStorage.setItem('tokens',JSON.stringify(tokens));
             setTokenValidado(true);
           }else{
             //setTokenValidado(false);
             //Sesión no válida
-            localStorage.removeItem('usuario');
-            localStorage.removeItem('tokens');
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
             history.push('/login');
           }
 
@@ -233,8 +233,8 @@ function InicioAplicante() {
               crearToken();
           }else{
             //La sesión ya no es válida
-            localStorage.removeItem('usuario');
-            localStorage.removeItem('tokens');
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
             history.push('/login');
           }
         }else{
@@ -251,8 +251,8 @@ function InicioAplicante() {
           }else{
             setPermisoValidado(false);
             //No permitido
-            localStorage.removeItem('usuario');
-            localStorage.removeItem('tokens');
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
             history.push('/login');
           }
         }
@@ -262,7 +262,7 @@ function InicioAplicante() {
             try {
               axios.get(URL,{
                 params: {
-                  dato: (JSON.parse(localStorage.getItem('usuario'))).nombre
+                  dato: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
                 },
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',

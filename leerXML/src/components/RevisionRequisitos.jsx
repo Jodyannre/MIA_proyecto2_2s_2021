@@ -119,9 +119,10 @@ function RevisionRequisitos() {
       };
 
 
-    const handleShow = (ubicacion) =>{
+    const handleShow = (dato) =>{
         setShow(true);
-        setSeleccion(ubicacion);
+        setSeleccion(dato[0]);
+        setId_documento(dato[0]);
     }
 
     const handleVer = (ubicacion,formato) =>{
@@ -133,7 +134,7 @@ function RevisionRequisitos() {
         history.push({
             pathname: '/verDoc',
             search: '?query=abc',
-            state: { ubicacion: ubicacion, formato:formato, expediente: location.state.expediente}
+            state: { ubicacion: ubicacion, formato:formato, expediente: location.state.expediente, rol:3}
         });
     }
 
@@ -171,11 +172,14 @@ function RevisionRequisitos() {
         setShowMotivo(false);
         if (event.target.value === '0'){
           //Cancelar
+          setMotivo(null);
         }
         else if (event.target.value === '1'){  
           //Rechazar
           setRechazados(true);
           await rechazarDocumento();
+          //Crear el motivo en la bd
+          await crearMotivo();
           setExpediente(null);
           setRequisitos(null);     
           setMotivo(null);       
@@ -218,6 +222,34 @@ function RevisionRequisitos() {
           motivo:motivo
         }
         let URL = 'http://localhost:3001/rechazarDocumento';
+        try {
+          return axios.get(URL,{
+            params: {
+              dato: documento
+            },
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+            }
+          })
+          .then((res) => {
+            console.log('se elimino.')
+            //setUsuarios(res);
+            console.log(res);
+          })  
+        } catch (err) {
+          console.error(err.message);
+        }
+      };
+
+
+
+      async function crearMotivo () {
+        let documento = {
+          id_documento: id_documento,
+          motivo: motivo
+        }
+        let URL = 'http://localhost:3001/crearMotivo';
         try {
           return axios.get(URL,{
             params: {
@@ -429,7 +461,7 @@ function RevisionRequisitos() {
                 { requisitos.map(dato=>{
                             return(                             
                                 <tbody>
-                                <td onClick={() =>{handleShow(dato[0])}}>{dato[3]}</td>
+                                <td onClick={() =>{handleShow(dato)}}>{dato[3]}</td>
                                 <td>{dato[1]}.{dato[5]}</td>
                                 <td>{dato[8]}</td>
                                 <td><Button variant="primary" value={3} onClick={() => {handleVer(dato[2],dato[5])}}>
@@ -441,11 +473,7 @@ function RevisionRequisitos() {
                                 </tbody>
                             )
                         })
-                    }
-
-
-
-                
+                    }      
               </Table>
               
               <Modal show={show} onHide={handleClose}>

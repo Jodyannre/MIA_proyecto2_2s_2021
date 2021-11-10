@@ -465,7 +465,7 @@ async function enviarDocumentosRechazados(cui,connection) {
         `
         SELECT a.id_requisito,a.id_documento,b.id_expediente, c.id_estado_documento, 
         d.nombre_estado_documento, e.cui, f.nombre_formato, g.nombre_requisito, 
-        c.nombre_documento, f.id_formato FROM DETALLE_REQUISITO_DOCUMENTO a
+        c.nombre_documento, f.id_formato,c.ubicacion FROM DETALLE_REQUISITO_DOCUMENTO a
         INNER JOIN DETALLE_DOCUMENTO b
         ON a.id_documento = b.id_documento
         INNER JOIN DOCUMENTO c
@@ -483,7 +483,7 @@ async function enviarDocumentosRechazados(cui,connection) {
         GROUP BY a.id_requisito,a.id_documento,b.id_expediente,
         c.id_estado_documento,d.nombre_estado_documento,e.cui,
         f.nombre_formato,g.nombre_requisito, c.nombre_documento,
-        f.id_formato 
+        f.id_formato,c.ubicacion 
         `
       );
       connection.commit();
@@ -947,6 +947,7 @@ async function enviarUsuarios(connection){
 
 
 async function enviarPlantilla(id_departamento, connection){
+  console.log('Enviando plantilla')
   try {
     const resultado = await connection.execute(
       `SELECT c.cui, c.nombres,c.apellidos,c.email,c.direccion,c.telefono, e.nombre_estado_expediente, g.nombre_puesto,  
@@ -1128,6 +1129,22 @@ async function getCredenciales(dato,connection){
 }
 
 
+async function getHistorial(id_documento,connection){
+  try {
+    const resultado = await connection.execute(
+      `SELECT * from DETALLE_MOTIVO_RECHAZO 
+      WHERE ID_DOCUMENTO = ${id_documento}`);
+    connection.commit();
+    //console.log(resultado.rows);
+    return resultado.rows;
+  } catch (err) {
+    console.error(err);
+  } finally {
+    
+  }  
+}
+
+
 async function getDatosCarrusel(connection){
   try {
     const resultado = await connection.execute(
@@ -1141,6 +1158,7 @@ async function getDatosCarrusel(connection){
       ON c.id_departamento = b.id_departamento
       FULL OUTER JOIN CALIFICACION d
       ON d.id_puesto = a.id_puesto
+      WHERE a.id_estado_puesto = 1
       GROUP BY a.id_puesto,a.nombre_puesto,a.imagen,a.salario,a.id_estado_puesto,
       c.nombre_departamento,c.id_departamento
       ORDER BY salario DESC 
@@ -1165,6 +1183,7 @@ async function getCategoriasCarrusel(connection){
       ON a.id_puesto = b.id_puesto
       INNER JOIN CATEGORIA c
       ON c.id_categoria = a.id_categoria
+      WHERE b.id_estado_puesto = 1
       ORDER BY id_puesto
       `);
     connection.commit();
@@ -1184,6 +1203,7 @@ async function login(usuario,password, connection){
       `SELECT nombre_usuario, pass_usuario, id_rol, id_usuario, estado_usuario,email from usuario 
       WHERE nombre_usuario = '${usuario}'
       AND pass_usuario = '${password}'
+      AND estado_usuario = 1
       `);
     connection.commit();
     console.log(resultado.rows);
@@ -1288,12 +1308,11 @@ async function eliminarUsuario(dato,connection) {
   try {
       const resultado = await connection.execute(
         `BEGIN
-          eliminarUsuario(:nombre, :pass, :correo, :respuesta);
+          eliminarUsuario(:nombre, :puesto, :respuesta);
          END;`,
         {  // bind variables
           nombre: dato.nombre,
-          pass: dato.pass,
-          correo: dato.email,
+          puesto: dato.puesto,
           respuesta: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER},
         }
       );
@@ -1329,13 +1348,37 @@ async function filtroNombreUsuario(connection,nombre){
 }
 
 
-async function aceptarExpediente(id_expediente,connection){
-  console.log(id_expediente);
+async function aceptarExpediente(id_expediente,opcion_in,connection){
+  console.log('id expediente: ',id_expediente)
+  try {
+    const resultado = await connection.execute(
+      `BEGIN
+      aceptarRechazarExpediente(:id,:opcion, :respuesta);
+       END;`,
+      {  // bind variables
+        id: id_expediente,
+        opcion: opcion_in,
+        respuesta: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER},
+      }
+    );
+    connection.commit();
+    console.log(resultado.outBinds);
+  } catch (err) {
+    console.error(err);
+  } finally {
+  }
+}
+
+
+
+async function actualizarUbicacion(id_documento,ubicacion,connection){
+  console.log(id_documento);
   try {
     const resultado = await connection.execute(
       `
-      UPDATE EXPEDIENTE SET id_estado_expediente = 4
-      WHERE id_expediente = ${id_expediente}
+      UPDATE DOCUMENTO SET ubicacion = '${ubicacion}',
+      id_estado_documento = 3
+      WHERE id_documento = ${id_documento}
       `
     );
     connection.commit();
@@ -1349,15 +1392,35 @@ async function aceptarExpediente(id_expediente,connection){
 }
 
 
+async function crearMotivo(dato,connection){
+  console.log('Motivo del doc: ',dato)
+  try {
+    const resultado = await connection.execute(
+      `BEGIN
+        crearMotivo(:id,:motivo, :respuesta);
+       END;`,
+      {  // bind variables
+        id: dato.id_documento,
+        motivo: dato.motivo,
+        respuesta: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER},
+      }
+    );
+    connection.commit();
+    console.log(resultado.outBinds);
+  } catch (err) {
+    console.error(err);
+  } finally {
+  }
+}
 
-async function actualizarUbicacion(id_documento,ubicacion,connection){
-  console.log(id_documento);
+
+async function actualizarCalificacion(puesto,calificacion,connection){
+
   try {
     const resultado = await connection.execute(
       `
-      UPDATE DOCUMENTO SET ubicacion = '${ubicacion}',
-      id_estado_documento = 3
-      WHERE id_documento = ${id_documento}
+      INSERT INTO CALIFICACION (valor, id_puesto) 
+      VALUES (${calificacion},${puesto})
       `
     );
     connection.commit();
@@ -1473,22 +1536,25 @@ async function aprobarExpediente(id_expediente,connection){
   }  
 }
 
-async function rechazarExpediente(id_expediente,connection){
+async function rechazarExpediente(id_expediente,opcion_in,connection){
+  console.log('id expediente: ',id_expediente)
   try {
     const resultado = await connection.execute(
-      `
-      UPDATE EXPEDIENTE SET id_estado_expediente = 5
-      WHERE id_expediente = ${id_expediente}
-      `
+      `BEGIN
+      aceptarRechazarExpediente(:id,:opcion, :respuesta);
+       END;`,
+      {  // bind variables
+        id: id_expediente,
+        opcion: opcion_in,
+        respuesta: { dir: oracledb.BIND_OUT, type: oracledb.NUMBER},
+      }
     );
     connection.commit();
-    //console.log(resultado.rows);
-    return resultado.rows;
+    console.log(resultado.outBinds);
   } catch (err) {
     console.error(err);
   } finally {
-    
-  }  
+  }
 }
 
 
@@ -1681,7 +1747,7 @@ async function filtroFinUsuario(connection,fecha){
       from USUARIO a
       INNER JOIN ROL b
       ON a.id_rol = b.id_rol
-      WHERE TRUNC(fecha_inicio) = TO_DATE('${fecha}','DD/MM/YYYY')`
+      WHERE TRUNC(fecha_fin) = TO_DATE('${fecha}','DD/MM/YYYY')`
     );
     connection.commit();
     //console.log(resultado.rows);
@@ -1935,3 +2001,6 @@ async function enviarEmailAprobacion(email,usuario,pass) {
   module.exports.actualizarDocumento = actualizarDocumento;
   module.exports.getDatosCarrusel = getDatosCarrusel;
   module.exports.getCategoriasCarrusel = getCategoriasCarrusel;
+  module.exports.actualizarCalificacion = actualizarCalificacion;
+  module.exports.crearMotivo = crearMotivo;
+  module.exports.getHistorial = getHistorial;

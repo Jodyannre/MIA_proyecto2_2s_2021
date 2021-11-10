@@ -16,21 +16,29 @@ const consulta = require('../consultas/consulta');
 
 function Acexpediente() {
     const [validated, setValidated] = useState(false);
-    const [show,setShow] = useState(false);
+    const [usuarioEditar, setUsuarioEditar] = useState(null);
+    const [cv, setCV] = useState(null);
+    const [id_documento, setId_documento] = useState(null);
     const [datosPuestos, setDatosPuestos] = useState(null);
+    const [show,setShow] = useState(false);
     const [opcionFiltro, setOpcionFiltro] = useState(0);
     const [opcionEscrita, setOpcionEscrita] = useState(null);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState('');
     const [editar, setEditar] = useState(false);
-    const [usuarioEditar, setUsuarioEditar] = useState(null);
     const [nombre, setNombre] = useState(''); 
     const [pass, setPass] = useState('');
     const [correo, setCorreo] = useState('');
     const [usuarios,setUsuarios] = useState(null);
     const [editado, setEditado] = useState(0);
-    const [cv, setCV] = useState(null);
-    const [id_documento, setId_documento] = useState(null);
     const history = useHistory();
+    const cookies = document.cookie;
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const tokens = JSON.parse(sessionStorage.getItem('tokens'));
+    const [permisoValidado, setPermisoValidado] = useState(null);
+    const [tokenValidado, setTokenValidado] = useState(null);
+    const [tokenRespuesta, setTokenRespuesta] = useState(null);
+    const [token, setToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(null);
 
     const handleClose  = async (event) => {
       setShow(false);
@@ -77,11 +85,57 @@ function Acexpediente() {
       }
     };
 
+
+    async function crearToken(){
+      let URL = 'http://localhost:3002/nuevoToken';
+      const user = {
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+      }
+      try {
+        axios.post(URL,{
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+          }
+        )
+        .then((res) => {
+            console.log('Autenticacion');
+            console.log(res);
+            setTokenRespuesta(res.data);
+        })  
+      } catch (err) {
+        console.error(err.message);
+      }
+  }
+
+  const verCookies = () =>{
+    if (cookies != ''){
+      //Existe mas de alguno
+      let tmp = cookies.split(';');
+      console.log('longitud ',tmp.length);
+      console.log(tmp);
+      if (tmp.length === 1){
+        //Solo existe el de refresco
+        setRefreshToken(tmp[0].replace('refresh=',''));
+        setToken('');
+      }else{
+        setRefreshToken(tmp[1].replace('refresh=',''));
+        setToken(tmp[0].replace('token=',''));          
+      }
+    }else{
+      //No existe ninguno
+      setRefreshToken('');
+      setToken('');
+    }
+  }
+
     async function traerExpedienteFiltro () {
         const dato = {
             opcionFiltro: opcionFiltro,
             opcionEscrita: opcionEscrita,
-            revisor: (JSON.parse(localStorage.getItem('usuario'))).nombre
+            revisor: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
           }
         let URL = 'http://localhost:3001/enviarExpedientesRevision';
         try {
@@ -118,7 +172,8 @@ function Acexpediente() {
 
     async function rechazarExpediente () {
       let expediente = {
-        id: usuarioSeleccionado[16]
+        id: usuarioSeleccionado[16],
+        opcion: 0
       }
       let URL = 'http://localhost:3001/rechazarExpediente';
       try {
@@ -169,7 +224,8 @@ function Acexpediente() {
 
     async function aceptarExpediente () {
       let expediente = {
-        id: usuarioSeleccionado[16]
+        id: usuarioSeleccionado[16],
+        opcion: 1
       }
       let URL = 'http://localhost:3001/aceptarExpediente';
       try {
@@ -303,7 +359,7 @@ function Acexpediente() {
 
 
     async function traerExpediente () {
-        const dato = (JSON.parse(localStorage.getItem('usuario'))).nombre;
+        const dato = (JSON.parse(sessionStorage.getItem('usuario'))).nombre;
         let URL = 'http://localhost:3001/enviarExpedientes';
         try {
           return axios.get(URL,{
@@ -329,15 +385,63 @@ function Acexpediente() {
     useEffect( async() => { 
 
       try{
+      //--------------------AUTH---------------------------------------------
+        verCookies();
+        if (tokenRespuesta){
+          
+          if (document.cookie != ''){
+            document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+            //actualizar localstorage
+            tokens.token = tokenRespuesta.token;
+            sessionStorage.setItem('tokens',JSON.stringify(tokens));
+            setTokenValidado(true);
+          }else{
+            //setTokenValidado(false);
+            //Sesión no válida
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
+
+        }
+        //Validaro tokens
+        if (token==='' && tokenRespuesta===null){
+          //El token expiro pedir otro
+          if (refreshToken!=''){
+              crearToken();
+          }else{
+            //La sesión ya no es válida
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
+        }else{
+          setTokenValidado(true);
+        }
+        if (permisoValidado===null){
+          if (2 === usuario.rol){
+            setPermisoValidado(true);
+            console.log('Tiene permiso.');
+          }else{
+            setPermisoValidado(false);
+            //No permitido
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
+        }
+      //-----------------------------------------------------------------
+      if (tokenValidado && permisoValidado){
         //Cargar usuarios
         if (usuarios === null){
           await traerExpediente();
         }
+      }
       }catch(error){
         console.log(error);
         history.push('/login');
       }
-    }, [usuarios]);
+    }, [usuarios,tokenRespuesta,tokenValidado,permisoValidado]);
     
     if (usuarios===null){
       return (

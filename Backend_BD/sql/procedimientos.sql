@@ -510,14 +510,29 @@ BEGIN
     FETCH FIRST 1 ROWS ONLY;
     
     --Obtener un usuario desocupado
-    SELECT a.id_usuario,COUNT(b.id_expediente) as contador INTO id_usuario_in,contador_in FROM usuario a 
-    FULL JOIN detalle_revision b
-    ON a.id_usuario = b.id_usuario
-    WHERE a.id_rol = 3 AND a.estado_usuario = 1 AND (b.estado_revision = 0 OR b.estado_revision IS NULL)
-    GROUP BY a.id_usuario, a.nombre_usuario, b.id_usuario,b.estado_revision
-    ORDER BY contador
-    FETCH FIRST 1 ROWS ONLY;
-    
+    SELECT id_usuario INTO id_usuario_in FROM
+        (
+            SELECT id_usuario, nombre_usuario, estado_usuario,
+                SUM(estado_real) suma FROM
+                (
+                    SELECT a.id_usuario,a.nombre_usuario,a.estado_usuario,b.id_detalle_revision,
+                    b.id_expediente,
+                    CASE WHEN b.estado_revision = 0 then 1 ELSE 0 END as estado_real,
+                    b.estado_revision
+                    from usuario a
+                    LEFT OUTER JOIN detalle_revision b
+                    ON a.id_usuario = b.id_usuario
+                    WHERE a.id_rol = 3 AND a.estado_usuario = 1
+                    GROUP BY a.id_usuario,a.nombre_usuario,a.estado_usuario,
+                    b.id_detalle_revision,b.id_expediente,b.estado_revision
+                )
+                GROUP BY
+                id_usuario, nombre_usuario, estado_usuario 
+                ORDER BY SUMA
+                FETCH FIRST 1 ROWS ONLY
+        )
+    ;
+
     --Asignarle al usuario el expediente
     INSERT INTO DETALLE_REVISION (id_usuario,id_expediente,estado_revision) VALUES (id_usuario_in,id_expediente_in,0);
     
@@ -560,11 +575,13 @@ ON a.id_rol = b.id_rol;
 create or replace view traerUsuarios as
 select nombre_usuario as nombre, estado_usuario as estado,
 TO_CHAR(a.fecha_inicio, 'DD-MM-YYYY') as fecha_inicio, TO_CHAR(a.fecha_fin, 'DD-MM-YYYY') as fecha_fin,
-nombre_rol as rol,id_usuario, pass_usuario as contraseña, email 
+nombre_rol as rol,id_usuario, pass_usuario as contraseña, email, b.id_rol, a.id_puesto 
 from USUARIO a
 INNER JOIN ROL b
 ON a.id_rol = b.id_rol;
 
+
+select * from documento;
 UPDATE USUARIO SET email = 'Jers.025@gmail.com', pass_usuario='otramas'
 WHERE nombre_usuario = '6847444125689';
 
@@ -593,20 +610,24 @@ set serveroutput on;
 create or replace procedure eliminarUsuario 
 (
 nombre_in IN VARCHAR2,
-pass_in IN VARCHAR2,
-email_in IN VARCHAR2,
+puesto_in IN NUMBER,
 respuesta_out OUT NUMBER
 )    
 is   
-
+fecha_actual DATE :=SYSDATE;
 begin   
-    UPDATE USUARIO SET estado_usuario = 0
-    WHERE nombre_usuario = nombre_in;    
+    UPDATE USUARIO SET estado_usuario = 0, fecha_fin = fecha_actual
+    WHERE nombre_usuario = nombre_in;  
+    IF (puesto_in != -1)THEN
+        --Si estaba contratado y hay que liberar el puesto
+        UPDATE PUESTO SET id_estado_puesto = 1
+        WHERE id_puesto = puesto_in;
+    END IF;
     respuesta_out := 1;
 end;
 
-
-
+select * from usuario;
+select * from expediente;
 
 SELECT c.cui, c.nombres,c.apellidos,c.email,c.direccion,c.telefono, e.nombre_estado_expediente, g.nombre_puesto,  
      b.nombre_rol, i.id_departamento, g.salario,g.id_puesto FROM usuario a
@@ -1117,3 +1138,96 @@ SELECT a.id_puesto,a.id_categoria,b.nombre_puesto, c.nombre_categoria from detal
       ON a.id_puesto = b.id_puesto
       INNER JOIN CATEGORIA c
       ON c.id_categoria = a.id_categoria;
+
+
+-------ACEPTAR RECHAZAR EXPEDIENTES
+set serveroutput on;
+create or replace procedure aceptarRechazarExpediente 
+(
+id_expediente_in IN NUMBER,
+opcion_in IN NUMBER,
+respuesta_out OUT NUMBER 
+)    
+is   
+fecha_actual DATE :=SYSDATE;
+begin   
+    UPDATE DETALLE_REVISION SET estado_revision = 1
+    WHERE id_expediente = id_expediente_in;
+    IF (opcion_in=1) THEN
+        UPDATE EXPEDIENTE set id_estado_expediente = 4
+        WHERE id_expediente = id_expediente_in;
+    ELSE
+        UPDATE EXPEDIENTE set id_estado_expediente = 5
+        WHERE id_expediente = id_expediente_in;
+        UPDATE USUARIO SET estado_usuario = 0, fecha_fin = fecha_actual
+        WHERE id_expediente = id_expediente_in;
+    END IF;
+    respuesta_out := 1;
+    exception
+        when NO_DATA_FOUND 
+            then
+                respuesta_out := 0;              
+end;
+
+
+
+
+--Conseguir revisor desocupado
+SELECT id_usuario FROM
+    (
+
+SELECT id_usuario, nombre_usuario, estado_usuario,
+    SUM(estado_real) suma FROM
+    (
+        SELECT a.id_usuario,a.nombre_usuario,a.estado_usuario,b.id_detalle_revision,
+        b.id_expediente,
+        CASE WHEN b.estado_revision = 0 then 1 ELSE 0 END as estado_real,
+        b.estado_revision
+        from usuario a
+        LEFT OUTER JOIN detalle_revision b
+        ON a.id_usuario = b.id_usuario
+        WHERE a.id_rol = 3 AND a.estado_usuario = 1
+        GROUP BY a.id_usuario,a.nombre_usuario,a.estado_usuario,
+        b.id_detalle_revision,b.id_expediente,b.estado_revision
+    )
+    GROUP BY
+    id_usuario, nombre_usuario, estado_usuario 
+    ORDER BY SUMA
+    FETCH FIRST 1 ROWS ONLY
+    )
+;
+
+
+
+
+-------CREAR MOTIVO
+set serveroutput on;
+create or replace procedure crearMotivo 
+(
+id_documento_in IN NUMBER,
+motivo_in IN VARCHAR2,
+respuesta_out OUT NUMBER 
+)    
+is   
+fecha_actual DATE :=SYSDATE;
+begin   
+    INSERT INTO DETALLE_MOTIVO_RECHAZO (motivo,id_documento,fecha) VALUES (motivo_in,id_documento_in,fecha_actual);
+    respuesta_out := 1;
+    exception
+        when NO_DATA_FOUND 
+            then
+                respuesta_out := 0;              
+end;
+
+
+DECLARE
+    respuesta NUMBER;
+BEGIN
+    crearMotivo(11,'nada bueno',respuesta);
+END;
+
+
+
+
+select * from documento;
+

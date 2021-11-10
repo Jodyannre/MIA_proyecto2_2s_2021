@@ -57,13 +57,17 @@ function InicioGuest() {
         });     
       };
 
-      const actualizarCalificacion = (puesto,calificacion) => {
-        console.log(calificacion);
+      async function actualizarCalificacion (puesto,calificacion){
+        await updateCalificacion(puesto,calificacion);
+        console.log("actualizada");
       }
 
       const abrirFormulario = (puesto)=>{
         setPuestoSeleccionado(puesto);
-        history.push('/formulario');
+        history.push({
+          pathname: '/formulario',
+          state: { id: puesto, puesto:"hola"}
+        }); 
 
       }
 
@@ -75,6 +79,29 @@ function InicioGuest() {
             console.log('se cargo.')
             console.log(res);
             setPuestos(res);
+          })  
+        } catch (err) {
+          console.error(err.message);
+        }
+      };
+
+      async function updateCalificacion (id_puesto,calificacion) {
+        let URL = 'http://localhost:3001/actualizarCalificacion';
+        const dato = {
+          puesto: id_puesto,
+          calificacion: calificacion
+        }
+        try {
+          axios.get(URL,{
+            params: {
+              dato: dato
+            },
+            headers: {
+                'Content-Type': 'application/json;charset=UTF-8',
+                "Access-Control-Allow-Origin": "*",
+            }
+          })
+          .then((res) => {
           })  
         } catch (err) {
           console.error(err.message);
@@ -112,7 +139,7 @@ function InicioGuest() {
                   puntuacion: 
                               <Rating
                                 name="simple-controlled"
-                                value={dato[8]}
+                                value={dato[9]}
                                 onChange={(event,newValue) => {
                                   actualizarCalificacion(dato[0],newValue);
                                 }}
@@ -164,7 +191,7 @@ function InicioGuest() {
                                 { puestos.data.map(dato=>{
                                     if(contador < 6){
                                       return(
-                                        <div className="container-imagen" onClick={()=>{abrirFormulario(dato); setContador(contador+1);}}>
+                                        <div className="container-imagen" onClick={()=>{aplicar(dato[0],dato[1]); setContador(contador+1);}}>
                                             {dato[2]==='no'? <img src="https://3.bp.blogspot.com/-tLzXde3LxFQ/XK0apb6KbDI/AAAAAAAAAAc/oNvgEjoehrcnJcGaXFsAPAse-W1WhUiRACLcBGAs/s640/descarga.png" />:<img src={dato[2]} />}
                                             Departamento: {dato[5]} || {"\n"} Salario: Q.{dato[3]} || Puesto: {dato[1]}
                                         </div>

@@ -6,6 +6,7 @@ import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import { useLocation } from "react-router-dom";
 import axios from 'axios';
+import { saveAs } from "file-saver";
 import '../App.css';
 import { useHistory } from 'react-router-dom';
 
@@ -27,7 +28,35 @@ function CorregirDocumentos() {
     const [documentoSeleccionado, setDocumentoSeleccionado] = useState(null);
 
 
+    const handleVer = (dato) =>{
+      console.log('ver seleccionado')
+      history.push({
+          pathname: '/verDoc',
+          search: '?query=abc',
+          state: { ubicacion: dato[10], formato:dato[6], expediente: (JSON.parse(sessionStorage.getItem('usuario'))).nombre, rol:4}
+      });
+      
+    }
 
+    const handleHistorial = (dato) =>{
+      console.log('ver seleccionado')
+      console.log(dato[1]);
+      history.push({
+          pathname: '/verHistorial',
+          search: '?query=abc',
+          state: { id_documento: dato[1], expediente: (JSON.parse(sessionStorage.getItem('usuario'))).nombre, rol:4}
+      });
+      
+    }
+
+
+  async function handleDescargar (ubicacion) {
+      let URL = 'http://localhost:3001/files/'+ubicacion;
+      saveAs(
+          URL,
+          ubicacion
+        );
+      };
 
     const cambioDocumento = async e => {
       setDocumentoSeleccionado(e.target.files[0]);   
@@ -87,7 +116,7 @@ function CorregirDocumentos() {
     async function getRequisitosAplicante () {
       let URL = 'http://localhost:3001/enviarDocumentosRechazados';
       const dato = {
-        cui: (JSON.parse(localStorage.getItem('usuario'))).nombre
+        cui: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
       }
       try {
         axios.get(URL,{
@@ -150,6 +179,9 @@ function CorregirDocumentos() {
                     <th>Documento</th>
                     <th>Estado de revisión</th>
                     <th>Cargar</th>
+                    <th>Visualizar</th>
+                    <th>Descargar</th>
+                    <th>Historial</th>
                   </tr>
                 </thead>
                 { requisitos.map(dato=>{
@@ -163,6 +195,21 @@ function CorregirDocumentos() {
                                       Corregir
                                   </Button>
                                   </td>
+                                  <td>
+                                  <Button variant="primary" value={1} onClick={(e)=>{handleVer(dato)}} >
+                                      Ver
+                                  </Button>
+                                  </td>
+                                  <td>
+                                  <Button variant="primary" value={1} onClick={(e)=>{handleDescargar(dato)}} >
+                                      Descargar
+                                  </Button>
+                                  </td>         
+                                  <td>
+                                  <Button variant="primary" value={1} onClick={(e)=>{handleHistorial(dato)}} >
+                                      Ver
+                                  </Button>
+                                  </td>                                                               
                                 </tbody>
                             )
                         })

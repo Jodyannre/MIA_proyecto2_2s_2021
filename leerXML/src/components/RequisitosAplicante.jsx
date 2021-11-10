@@ -74,7 +74,7 @@ function RequisitosAplicante() {
       /////////CREAR ARCHIVO RENOMBRADO
       console.log("Requisito");
       //console.log(dato);
-      let dpi = (JSON.parse(localStorage.getItem('usuario'))).nombre;
+      let dpi = (JSON.parse(sessionStorage.getItem('usuario'))).nombre;
       let nombreDoc = '';
       let tipoArchivo = dato.archivo.name.split('.').pop();
       let nombreArchivo = dato.archivo.name.split('.')[0];
@@ -112,7 +112,7 @@ function RequisitosAplicante() {
             try {
               axios.get(URL,{
                 params: {
-                  nombre: (JSON.parse(localStorage.getItem('usuario'))).nombre
+                  nombre: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
                 },
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',

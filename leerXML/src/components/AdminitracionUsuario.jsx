@@ -6,12 +6,14 @@ import Row from 'react-bootstrap/Row';
 import Modal from 'react-bootstrap/Modal';
 import Table from 'react-bootstrap/Table';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 
 import '../App.css';
 const consulta = require('../consultas/consulta');
 
 function AdminitracionUsuario() {
+    const history = useHistory();
     const [validated, setValidated] = useState(false);
     const [show,setShow] = useState(false);
     const [datosPuestos, setDatosPuestos] = useState(null);
@@ -23,9 +25,17 @@ function AdminitracionUsuario() {
     const [nombre, setNombre] = useState(''); 
     const [pass, setPass] = useState('');
     const [correo, setCorreo] = useState('');
+    const [id_puesto, setId_puesto] = useState('');
     const [usuarios,setUsuarios] = useState(null);
     const [editado, setEditado] = useState(0);
 
+
+    async function regresar(){
+      setEditar(false);
+      setUsuarios(null);
+      await traerUsuarios();
+      console.log('Regresar');
+    }
 
     const handleClose  = async (event) => {
       setShow(false);
@@ -51,8 +61,7 @@ function AdminitracionUsuario() {
     async function eliminarUsuario () {
       let dato = {
         nombre: nombre,
-        pass: pass,
-        email: correo
+        puesto: id_puesto
       }
       let URL = 'http://localhost:3001/eliminarUsuario';
       try {
@@ -92,6 +101,11 @@ function AdminitracionUsuario() {
       setPass(dato[6]);
       setCorreo(dato[7]);
       setUsuarioEditar(dato);
+      if (dato[9]===null){
+        setId_puesto(-1);
+      }else{
+        setId_puesto(dato[9]);
+      }
       setShow(true)
       console.log('dato: ',dato);
     }
@@ -314,7 +328,11 @@ function AdminitracionUsuario() {
               <Button variant="primary" type="submit">
                 Actualizar
               </Button>
-            </Form>          
+              <Button variant="primary" onClick={()=>(regresar())}>
+                Regresar
+              </Button>    
+            </Form>     
+ 
           </div>           
         </div>
       </div>    

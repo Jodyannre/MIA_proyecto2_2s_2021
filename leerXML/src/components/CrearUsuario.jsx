@@ -5,6 +5,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import axios from 'axios';
 import { InputGroup } from "react-bootstrap";
+import { useHistory } from 'react-router-dom';
 
 import '../App.css';
 const consulta = require('../consultas/consulta');
@@ -20,6 +21,7 @@ function CrearUsuario() {
     const [prueba2, setPrueba2] = useState(null);
     const [departamento, setDepartamento] = useState(-1);
     const [datosDepartamentos, setDatosDepartamentos] = useState(null);
+    const history = useHistory();
 
   
     const handleSubmit = async (event) => {
@@ -52,6 +54,10 @@ function CrearUsuario() {
             */
 
             //Una vez creado el usuario hay que
+            const cuarto = setTimeout(() => {
+              history.push('/administracion');
+            }, 1200);
+
       }
       setValidated(true);
     };
@@ -152,6 +158,7 @@ function CrearUsuario() {
     
     if(!datosRoles || !datosDepartamentos){
       return (
+        <div class="row justify-content-md-center">
         <div className='Formulario-expediente'>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row className="mb-3">
@@ -232,11 +239,13 @@ function CrearUsuario() {
         <Button type="submit">Enviar formulario</Button>
       </Form>
       </div>
+      </div>
     );
     }
     
   
     return (
+      <div class="row justify-content-md-center">
         <div className='Formulario-expediente'>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row className="mb-3">
@@ -328,6 +337,7 @@ function CrearUsuario() {
         </Form.Group>
         <Button type="submit">Enviar formulario</Button>
       </Form>
+      </div>
       </div>
     );
   }

@@ -16,7 +16,7 @@ const consulta = require('../consultas/consulta');
 function AdministracionPlantilla() {
     const [validated, setValidated] = useState(false);
     const [show,setShow] = useState(false);
-    const [datosPuestos, setDatosPuestos] = useState(null);
+    const [id_puesto, setId_puesto] = useState(null);
     const [opcionFiltro, setOpcionFiltro] = useState(0);
     const [opcionEscrita, setOpcionEscrita] = useState(null);
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState('');
@@ -27,9 +27,15 @@ function AdministracionPlantilla() {
     const [correo, setCorreo] = useState('');
     const [usuarios,setUsuarios] = useState(null);
     const [editado, setEditado] = useState(0);
+    const history = useHistory();
+    const cookies = document.cookie;
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    const tokens = JSON.parse(sessionStorage.getItem('tokens'));
     const [permisoValidado, setPermisoValidado] = useState(null);
     const [tokenValidado, setTokenValidado] = useState(null);
-    const history = useHistory();
+    const [tokenRespuesta, setTokenRespuesta] = useState(null);
+    const [token, setToken] = useState(null);
+    const [refreshToken, setRefreshToken] = useState(null);
 
 
     const handleClose  = async (event) => {
@@ -62,7 +68,8 @@ function AdministracionPlantilla() {
       let dato = {
         nombre: nombre,
         pass: pass,
-        email: correo
+        email: correo,
+        puesto:id_puesto
       }
       let URL = 'http://localhost:3001/eliminarUsuario';
       try {
@@ -134,6 +141,11 @@ function AdministracionPlantilla() {
       setNombre(dato[0]);
       setPass(dato[6]);
       setCorreo(dato[7]);
+      if (dato[9]===null){
+        setId_puesto(-1);
+      }else{
+        setId_puesto(dato[9]);
+      }
       setUsuarioEditar(dato);
       setShow(true)
       console.log('dato: ',dato);
@@ -161,13 +173,6 @@ function AdministracionPlantilla() {
       setOpcionEscrita(e.target.value);
       console.log(opcionEscrita);
     }
-
-
-  
-    const handleSubmit = async (event) => {
-      console.log('filtrando');
-    };
-
 
 
     async function editarUsuario () {
@@ -198,8 +203,55 @@ function AdministracionPlantilla() {
     }; 
 
 
+    async function crearToken(){
+      let URL = 'http://localhost:3002/nuevoToken';
+      const user = {
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+      }
+      try {
+        axios.post(URL,{
+          user: usuario.nombre,
+          password: usuario.contraseña,
+          refreshToken: tokens.refresh
+          }
+        )
+        .then((res) => {
+            console.log('Autenticacion');
+            console.log(res);
+            setTokenRespuesta(res.data);
+        })  
+      } catch (err) {
+        console.error(err.message);
+      }
+
+  }
+
+  const verCookies = () =>{
+    if (cookies != ''){
+      //Existe mas de alguno
+      let tmp = cookies.split(';');
+      console.log('longitud ',tmp.length);
+      console.log(tmp);
+      if (tmp.length === 1){
+        //Solo existe el de refresco
+        setRefreshToken(tmp[0].replace('refresh=',''));
+        setToken('');
+      }else{
+        setRefreshToken(tmp[1].replace('refresh=',''));
+        setToken(tmp[0].replace('token=',''));          
+      }
+    }else{
+      //No existe ninguno
+      setRefreshToken('');
+      setToken('');
+    }
+  }
+
+
     async function traerPlantilla () {
-      const dato = (JSON.parse(localStorage.getItem('usuario'))).nombre;
+      const dato = (JSON.parse(sessionStorage.getItem('usuario'))).nombre;
       let URL = 'http://localhost:3001/enviarPlantilla';
       try {
         return axios.get(URL,{
@@ -224,30 +276,72 @@ function AdministracionPlantilla() {
 
 
     useEffect( async() => { 
-      //Verificar que tiene permiso y que la sesión existe
-      if (permisoValidado===null){
-        setPermisoValidado(await ValidarPermiso(2));
-      }
-      if (tokenValidado===null){
-        setTokenValidado(await ValidarToken());
-      }
+      console.log('Esta en plantilla');
+      try{
+        //Verificar que tiene permiso y que la sesión existe
+        verCookies();
+        if (tokenRespuesta){
+          console.log("tokenRespuesta");
+          console.log(document.cookie);
+          if (document.cookie != ''){
+            document.cookie = `token=${tokenRespuesta.token}; max-age=${10}; path=/; samesite=strict;`;
+            //actualizar localstorage
+            tokens.token = tokenRespuesta.token;
+            sessionStorage.setItem('tokens',JSON.stringify(tokens));
+            setTokenValidado(true);
+          }else{
+            //setTokenValidado(false);
+            //Sesión no válida
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
 
-      //Cargar usuarios
-      if (permisoValidado!=null && tokenValidado!=null){
-        if (permisoValidado && tokenValidado){
-          await traerPlantilla();
-        }else{
-          history.push('/login');
         }
-        
+        //Validaro tokens
+        if (token==='' && tokenRespuesta===null){
+          //El token expiro pedir otro
+          if (refreshToken!=''){
+              crearToken();
+          }else{
+            //La sesión ya no es válida
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
+        }else{
+          setTokenValidado(true);
+        }
+
+        if (permisoValidado===null){
+          if (2 === usuario.rol){
+            setPermisoValidado(true);
+            console.log('Tiene permiso.');
+          }else{
+            setPermisoValidado(false);
+            //No permitido
+            sessionStorage.removeItem('usuario');
+            sessionStorage.removeItem('tokens');
+            history.push('/login');
+          }
+        }
+        if (tokenValidado && permisoValidado){
+          await traerPlantilla();
+        }
+
+
+      }catch(error){
+        console.log(error);
+        history.push('/login');
       }
-    }, [permisoValidado, tokenValidado]);
+      
+    }, [tokenRespuesta,tokenValidado,permisoValidado]);
     
 
 
 
 
-    if (permisoValidado===null || tokenValidado===null){
+    if (permisoValidado===null || tokenValidado===null || usuarios===null){
       return (
       <div className="container">
         <div class="spinner-border" role="status">

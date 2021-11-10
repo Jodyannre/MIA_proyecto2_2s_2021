@@ -128,9 +128,9 @@ function Login() {
                 email: credenciales[5]
             }
             //Guardar usuario logueado en localstorage
-            localStorage.setItem('usuario',JSON.stringify(usuario));
+            sessionStorage.setItem('usuario',JSON.stringify(usuario));
             //Traer al usuario guardado en localStorage
-            let variable = localStorage.getItem('usuario');
+            let variable = sessionStorage.getItem('usuario');
 
         }
         
@@ -145,12 +145,12 @@ function Login() {
                 user: credenciales[0],
                 password: credenciales[1]           
             }
-            localStorage.setItem('tokens',JSON.stringify(tokens));
-            let variable = localStorage.getItem('tokens');
+            sessionStorage.setItem('tokens',JSON.stringify(tokens));
+            let variable = sessionStorage.getItem('tokens');
             //Agregar token a las cookies
             
             document.cookie = `token=${autenticacion.token}; max-age=${10}; path=/; samesite=strict;`;
-            document.cookie = `refresh=${autenticacion.refreshToken}; max-age=${900}; path=/; samesite=strict;`;
+            document.cookie = `refresh=${autenticacion.refreshToken}; max-age=${60}; path=/; samesite=strict;`;
             if (credenciales[2]===4 || credenciales[2]===5 ){
                 // Es un aplicante
                 history.push('/inicioAplicante');
@@ -162,6 +162,7 @@ function Login() {
                 history.push('/administracionPlantilla');
                 //history.push('/inicioAplicante');
             }else if (credenciales[2]===1){
+              history.push('/administracion');
                 //Es el administrador
                 //history.push('/inicioAplicante');
             }

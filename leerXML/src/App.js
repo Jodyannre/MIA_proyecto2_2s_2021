@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { Navigation, Footer, Home, About, Contact, Formulario, 
   CargaMasiva, CrearUsuario, AdminitracionUsuario,AdministracionPlantilla, Acexpediente, 
   Cv, RequisitosAplicante,InicioAplicante, EditarExpedienteAplicante, InicioGuest,
-  RevisionRequisitos, VerDoc, CorregirDocumentos, Login, Administracion } from "./components";
+  RevisionRequisitos, VerDoc, CorregirDocumentos, Login, Administracion, VerHistorial } from "./components";
 
   //global.login = 'CarlogG';
   //6789456218542
@@ -37,6 +37,7 @@ function App() {
           <Route path="/verDoc" exact component ={() => <VerDoc />} /> 
           <Route path="/corregirDocumentos" exact component ={() => <CorregirDocumentos />} /> 
           <Route path="/administracion" exact component ={() => <Administracion />} /> 
+          <Route path="/verHistorial" exact component ={() => <VerHistorial />} /> 
 
         </Switch>
         <Footer />

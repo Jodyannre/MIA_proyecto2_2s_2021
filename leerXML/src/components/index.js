@@ -19,3 +19,4 @@ export { default as VerDoc} from "./VerDoc";
 export { default as CorregirDocumentos} from "./CorregirDocumentos"
 export { default as Login} from "./Login";
 export { default as Administracion} from "./Administracion";
+export { default as VerHistorial} from "./VerHistorial";

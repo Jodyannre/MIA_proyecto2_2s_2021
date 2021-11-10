@@ -283,7 +283,6 @@ function Formulario() {
             <Form.Control 
             required
             type="file" 
-            accept='.txt'
             size="sm"
             onChange = {cambioCV}
              />
@@ -297,12 +296,7 @@ function Formulario() {
           onChange={puestoSeleccionado}
         >
           <option>Seleccione un puesto</option>
-          { datosPuestos.data.map(dato=>{
-                      return(
-                        <option value={dato[0]}>{dato[1]}</option>
-                      )
-                      })
-                    }
+            <option value={location.state.id}>{location.state.puesto}</option>
         </Form.Control>
         </div>
         </Col>

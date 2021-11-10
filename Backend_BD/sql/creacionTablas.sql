@@ -212,9 +212,6 @@ CREATE TABLE calificacion(
     id_calificacion NUMERIC(10) DEFAULT conteo_id_calificacion.nextval NOT NULL PRIMARY KEY,
     valor NUMERIC(10) NOT NULL,
     id_puesto NUMERIC(10) NOT NULL,
-    CONSTRAINT fk_id_usuario_calificacion
-        FOREIGN KEY (id_usuario)
-        REFERENCES usuario(id_usuario),
     CONSTRAINT fk_id_puesto_calificacion
         FOREIGN KEY (id_puesto)
         REFERENCES puesto(id_puesto) 
@@ -280,7 +277,8 @@ CREATE TABLE detalle_requisito_documento(
 CREATE TABLE detalle_motivo_rechazo(
     id_detalle_motivo_rechazo NUMERIC(10) DEFAULT conteo_detalle_motivo_rechazo.nextval NOT NULL PRIMARY KEY,
     motivo VARCHAR(300) NOT NULL,
-    id_documento NUMERIC(10),
+    id_documento NUMERIC(10) NOT NULL,
+    fecha DATE NOT NULL,
     CONSTRAINT fk_detalle_motivo_rechazo_id_documento
     FOREIGN KEY (id_documento)
     REFERENCES documento(id_documento) 
@@ -309,6 +307,7 @@ VALUES (1,'admin','admin',SYSDATE,1,'jers_033@hotmail.com');
 
 commit;
 
+drop table detalle_motivo_rechazo;
 drop table detalle_requisito_documento;
 drop table detalle_revision;
 drop table detalle_usuario;
@@ -332,7 +331,7 @@ drop table estado_expediente;
 drop table formato;
 drop table estado_documento;
 drop table estado_puesto;
-drop table detalle_motivo_rechazo;
+
 
 DROP SEQUENCE conteo_estado_documento;
 DROP SEQUENCE conteo_formato;
@@ -357,5 +356,9 @@ DROP SEQUENCE conteo_id_estado_puesto;
 DROP SEQUENCE conteo_id_detalle_revision;
 DROP SEQUENCE conteo_id_detalle_requisito_documento;
 DROP SEQUENCE conteo_detalle_motivo_rechazo;
+
+
+
+
 
 

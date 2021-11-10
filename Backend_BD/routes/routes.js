@@ -122,7 +122,13 @@ router.get('/enviarUsuarios', async function (req, res, next) {
       resultado = await consulta.filtroNombreUsuario(conexion,opcionEscrita);
       break;
     case 2:
-      resultado = await consulta.filtroEstadoUsuario(conexion,opcionEscrita);
+      let opcion = 0;
+      if (opcionEscrita.toLowerCase() === 'activo'){
+        opcion = 1;
+      }else if (opcionEscrita.toLowerCase() === 'eliminado'){
+        opcion = 0;
+      }
+      resultado = await consulta.filtroEstadoUsuario(conexion,opcion);
       break;
     case 3:
       resultado = await consulta.filtroInicioUsuario(conexion,opcionEscrita); 
@@ -185,6 +191,7 @@ router.get('/enviarExpedientesRevision', async function (req, res, next) {
 
 router.get('/enviarPlantilla', async function (req, res, next) {
   const dato = req.query.dato;
+  console.log("coodinador: ", dato);
   //let usuario_coordinador = JSON.parse(req.query.dato);
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
   const resultado = await consulta.getDepartamento(dato, conexion); 
@@ -200,6 +207,47 @@ router.get('/enviarPlantilla', async function (req, res, next) {
     }
   }
   res.send(segundos);
+});
+
+
+
+router.get('/getHistorial', async function (req, res, next) {
+  const dato = JSON.parse(req.query.dato);
+  console.log("Historial del documento: ", dato);
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const resultado = await consulta.getHistorial(dato.id_documento, conexion); 
+  console.log(resultado);
+  if (conexion) {
+    try {
+      const tercera = setTimeout(() => {
+        conexion.close();
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(resultado);
+});
+
+
+
+
+router.get('/crearMotivo', async function (req, res, next) {
+  const dato = JSON.parse(req.query.dato);
+  console.log(dato);
+  //let usuario_coordinador = JSON.parse(req.query.dato);
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  const resultado = await consulta.crearMotivo(dato, conexion); 
+  if (conexion) {
+    try {
+      const tercera = setTimeout(() => {
+        conexion.close();
+      }, 1000);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(resultado);
 });
 
 
@@ -259,7 +307,7 @@ router.get('/aceptarExpediente', async function (req, res, next) {
   const dato = JSON.parse(req.query.dato);
   console.log(dato.id);
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
-  const resultado = await consulta.aceptarExpediente(parseInt(dato.id, 10),conexion); 
+  const resultado = await consulta.aceptarExpediente(parseInt(dato.id, 10),parseInt(dato.opcion, 10),conexion); 
   if (conexion) {
     try {
       const tercera = setTimeout(() => {
@@ -381,7 +429,7 @@ router.get('/enviarEmailRechazo', async function (req, res, next) {
 router.get('/rechazarExpediente', async function (req, res, next) {
   const dato = JSON.parse(req.query.dato);
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
-  const resultado = await consulta.rechazarExpediente(parseInt(dato.id, 10),conexion); 
+  const resultado = await consulta.rechazarExpediente(parseInt(dato.id, 10),parseInt(dato.opcion, 10),conexion); 
   if (conexion) {
     try {
       const tercera = setTimeout(() => {
@@ -490,6 +538,21 @@ router.get('/actualizarUbicacion', async function (req, res, next) {
   console.log(dato);
   let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
   let resultado = await consulta.actualizarUbicacion(dato.documento,dato.ubicacion,conexion);
+  if (conexion) {
+    try {
+      await conexion.close();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+  res.send(resultado);
+});
+
+router.get('/actualizarCalificacion', async function (req, res, next) {
+  const dato = JSON.parse(req.query.dato);
+  console.log(dato);
+  let conexion = await oracledb.getConnection({ user: "JODDIE", password: "6lQUc34RO-av&qlk_H#g", connectionString: "proyecto2_medium" });
+  let resultado = await consulta.actualizarCalificacion(dato.puesto,dato.calificacion,conexion);
   if (conexion) {
     try {
       await conexion.close();

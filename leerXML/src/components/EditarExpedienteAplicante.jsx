@@ -85,7 +85,7 @@ function EditarExpedienteAplicante() {
             try {
               axios.get(URL,{
                 params: {
-                  dato: global.login
+                  dato: (JSON.parse(sessionStorage.getItem('usuario'))).nombre
                 },
                 headers: {
                     'Content-Type': 'application/json;charset=UTF-8',

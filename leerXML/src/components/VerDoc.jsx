@@ -12,16 +12,25 @@ const VerDoc = props => {
     const history = useHistory();
 
     const regresar = () =>{
-        
-        history.push({
-            pathname: '/revisionRequisitos',
-            search: '?query=abc',
-            state: { expediente: location.state.expediente}    
-        });
+        if (location.state.rol === 3){
+            history.push({
+                pathname: '/revisionRequisitos',
+                search: '?query=abc',
+                state: { expediente: location.state.expediente}    
+            });
+        }else{
+            history.push({
+                pathname: '/corregirDocumentos',
+                search: '?query=abc',
+                state: { expediente: location.state.expediente}    
+            });            
+        }
+
     }
 
   
   useEffect(() => {
+    console.log(location.state);
     setFile("http://localhost:3001/files/"+location.state.ubicacion);
     setFormato(location.state.formato)
  }, [location]);
