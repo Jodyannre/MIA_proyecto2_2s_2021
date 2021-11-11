@@ -441,7 +441,6 @@ function Reportes() {
                         <tr>
                             <th>Capital</th>
                             <th>Departamento</th>
-                            <th>Departamento</th>
                         </tr>
                     </thead>
                     <tbody>

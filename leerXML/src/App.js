@@ -14,8 +14,8 @@ import { Navigation, Footer, Home, About, Contact, Formulario,
   global.expedienteActual = '6789456218542';
   global.Req_ap_anterior = 0;
   global.documentoVer = '';
-  global.tokenLife = 30;
-  global.refreshLife = 2*60;
+  global.tokenLife = 3*60;
+  global.refreshLife = 15*60;
 
 function App() {
   return (

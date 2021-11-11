@@ -790,7 +790,7 @@ router.get('/crearDocumento', async function (req, res, next) {
 });
 
 router.post('/cargarArchivo', async function (req, res, next) {
-  const newpath = __basedir + "\\files\\";
+  const newpath = __basedir + "/files/";
   const file = req.files.file;
   const filename = file.name;
   //console.log(file);
@@ -812,7 +812,7 @@ router.post('/cargarArchivo', async function (req, res, next) {
 
 router.post('/retornarArchivo', async function (req, res, next) {
   const fs = require('fs');
-  const newpath = __basedir + "\\files\\";
+  const newpath = __basedir + "/files/";
   const filename = req.body.ubicacion;
   const path = `${newpath}${filename}`;
   console.log(path);
