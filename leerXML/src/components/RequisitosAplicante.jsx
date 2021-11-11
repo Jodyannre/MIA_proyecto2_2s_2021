@@ -237,6 +237,7 @@ function RequisitosAplicante() {
 
           if (requisitos ===null){
             await traerRequisitosAplicante();
+            global.Req_ap_anterior = null;
           }else{
 
           }
@@ -271,9 +272,7 @@ function RequisitosAplicante() {
                 </thead>
                 <tbody>
               { requisitos.map(dato=>{
-                            if (validarRequisitoRepetido(dato[3])){
-                                return;
-                            }else
+
                             return(    
                               <tr>
                               <td>{                                

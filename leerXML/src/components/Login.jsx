@@ -196,7 +196,7 @@ function Login() {
             <Form.Control
               required
               type="password"
-              placeholder="Apellido"
+              placeholder="contraseña"
               value={password}
               onChange= {cambioPass}
             />

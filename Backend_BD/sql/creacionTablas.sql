@@ -54,7 +54,8 @@ CREATE TABLE requisito (
 CREATE TABLE departamento (
     id_departamento NUMERIC(10) DEFAULT conteo_departamento.nextval NOT NULL PRIMARY KEY,
     nombre_departamento VARCHAR(100) NOT NULL,
-    capital VARCHAR(100) NOT NULL
+    capital VARCHAR(100) NOT NULL,
+    capital_disponible VARCHAR(100)
 );
 
 CREATE TABLE puesto (
@@ -300,6 +301,7 @@ INSERT INTO ROL (nombre_rol) VALUES ('Revisor de expedientes');
 INSERT INTO ROL (nombre_rol) VALUES ('Aplicante');
 INSERT INTO ROL (nombre_rol) VALUES ('Contratado');
 INSERT INTO FORMATO (nombre_formato) VALUES ('txt');
+INSERT INTO FORMATO (nombre_formato) VALUES ('docx');
 INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Libre');
 INSERT INTO ESTADO_PUESTO (nombre_estado_puesto) VALUES ('Ocupado');
 INSERT INTO USUARIO (id_rol,nombre_usuario,pass_usuario,fecha_inicio,estado_usuario,email)

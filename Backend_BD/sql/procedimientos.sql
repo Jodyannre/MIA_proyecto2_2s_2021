@@ -615,6 +615,10 @@ respuesta_out OUT NUMBER
 )    
 is   
 fecha_actual DATE :=SYSDATE;
+salario_in FLOAT;
+departamento_in NUMBER;
+capitald_in FLOAT;
+resultado FLOAT;
 begin   
     UPDATE USUARIO SET estado_usuario = 0, fecha_fin = fecha_actual
     WHERE nombre_usuario = nombre_in;  
@@ -622,13 +626,30 @@ begin
         --Si estaba contratado y hay que liberar el puesto
         UPDATE PUESTO SET id_estado_puesto = 1
         WHERE id_puesto = puesto_in;
+
+        --Obtener salario del puesto a eliminar
+        SELECT * INTO salario_in,departamento_in,capitald_in FROM 
+        (
+            SELECT b.salario, c.id_departamento, d.capital_disponible FROM detalle_puesto a
+            INNER JOIN PUESTO b
+            ON a.id_puesto = b.id_puesto
+            INNER JOIN DETALLE_PUESTO c
+            ON c.id_puesto = a.id_puesto
+            INNER JOIN DEPARTAMENTO d
+            ON d.id_departamento = c.id_departamento
+            WHERE a.id_puesto = puesto_in
+        );
+        --Calcular el nuevo capital
+        resultado := capitald_in + salario_in;
+        --Actualizar capital disponible
+        UPDATE DEPARTAMENTO SET capital_disponible = resultado
+        WHERE id_departamento = departamento_in;
     END IF;
     respuesta_out := 1;
 end;
 
 select * from usuario;
-select * from expediente;
-
+    
 SELECT c.cui, c.nombres,c.apellidos,c.email,c.direccion,c.telefono, e.nombre_estado_expediente, g.nombre_puesto,  
      b.nombre_rol, i.id_departamento, g.salario,g.id_puesto FROM usuario a
 INNER JOIN ROL b
@@ -728,8 +749,75 @@ end;
 
 
 
+--Vista para traer el departamento y el salario del último usuario asociado
+CREATE OR REPLACE VIEW ultimoAsociado as
+SELECT a.id_departamento as departamento, d.capital,d.capital_disponible, c.salario FROM DETALLE_USUARIO a
+INNER JOIN USUARIO b
+ON a.id_usuario = b.id_usuario
+INNER JOIN PUESTO c
+ON b.id_puesto = c.id_puesto
+INNER JOIN DEPARTAMENTO d
+ON a.id_departamento = d.id_departamento
+WHERE b.id_expediente IS NOT NULL
+ORDER BY a.id_detalle_usuario DESC
+FETCH FIRST 1 ROWS ONLY;
 
 
+-- calculo para el salario disponible
+set serveroutput on;
+DECLARE
+departamento_in NUMBER;
+capital_in FLOAT;
+capitald_in FLOAT;
+salario_in FLOAT;
+resultado FLOAT;
+BEGIN
+Select * INTO departamento_in,capital_in,capitald_in,salario_in from ultimoAsociado;
+    IF capitald_in IS NULL THEN
+    --Todavía no hay asociados
+    resultado:= capital_in - salario_in;
+    ELSE
+    --Ya hay asociados
+    resultado:= capitald_in - salario_in;
+    END IF;
+    UPDATE DEPARTAMENTO SET capital_disponible = resultado
+    WHERE id_departamento = departamento_in;
+    dbms_output.put_line(resultado);
+END;
+
+
+
+
+
+
+--Trigger para actualizar el salario del ultimo asociado
+set serveroutput on;
+CREATE OR REPLACE TRIGGER actualizarCapital
+AFTER INSERT ON DETALLE_USUARIO
+DECLARE
+    departamento_in NUMBER;
+    capital_in FLOAT;
+    capitald_in FLOAT;
+    salario_in FLOAT;
+    resultado FLOAT;
+BEGIN
+    --Traer todos los datos necesarios de la view ultimoAsociado
+    Select * INTO departamento_in,capital_in,capitald_in,salario_in from ultimoAsociado;
+    IF capitald_in IS NULL THEN
+    --Todavía no hay asociados
+    resultado:= capital_in - salario_in;
+    ELSE
+    --Ya hay asociados
+    resultado:= capitald_in - salario_in;
+    END IF;
+    UPDATE DEPARTAMENTO SET capital_disponible = resultado
+    WHERE id_departamento = departamento_in;
+    dbms_output.put_line(resultado);
+END;
+
+
+select * from departamento;
+select * from usuario;
 
 set serveroutput on;
 DECLARE
@@ -1296,6 +1384,98 @@ END;
 
 
 
+--REPORTE 3 con cursores
+set serveroutput on;
+create or replace procedure reporteReclutadores(
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+        OPEN cursor_out FOR
+        SELECT b.id_usuario, b.nombre_usuario, COUNT(a.id_usuario) as contador from detalle_revision a
+        INNER JOIN USUARIO b
+        ON a.id_usuario = b.id_usuario
+        GROUP BY b.id_usuario, b.nombre_usuario
+        ORDER BY contador DESC
+        FETCH FIRST 5 ROWS ONLY;
+END;
+
+
+
+--REPORTE 4 con cursores
+set serveroutput on;
+create or replace procedure reporteAplicantes(
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+        OPEN cursor_out FOR
+        SELECT COUNT(c.id_expediente) as contador, e.nombre_usuario,d.nombres,d.apellidos FROM DETALLE_MOTIVO_RECHAZO a
+        INNER JOIN DOCUMENTO b
+        ON a.id_documento = b.id_documento
+        INNER JOIN DETALLE_DOCUMENTO c
+        ON c.id_documento = b.id_documento
+        INNER JOIN EXPEDIENTE d
+        ON d.id_expediente = c.id_expediente
+        INNER JOIN USUARIO e
+        ON e.id_expediente = c.id_expediente
+        GROUP BY e.nombre_usuario,d.nombres,d.apellidos
+        ORDER BY contador DESC
+        FETCH FIRST 5 ROWS ONLY
+        ;
+END;
+
+
+
+
+--REPORTE 5 con cursores
+set serveroutput on;
+create or replace procedure reporteCapital(
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+        OPEN cursor_out FOR
+        SELECT SUM(b.salario) as total, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.estado_usuario = 1
+        AND a.id_puesto is not null
+        GROUP BY d.id_departamento, d.nombre_departamento
+        ORDER BY total DESC
+        FETCH FIRST 5 ROWS ONLY
+        ;
+END;
+
+
+
+
+--REPORTE 6 con cursores
+set serveroutput on;
+create or replace procedure reporteSalario(
+cursor_out IN OUT SYS_REFCURSOR
+) 
+is
+BEGIN
+        OPEN cursor_out FOR
+       SELECT b.nombre_puesto, b.salario, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+        INNER JOIN PUESTO b
+        ON a.id_puesto = b.id_puesto
+        INNER JOIN DETALLE_PUESTO c
+        ON c.id_puesto = b.id_puesto
+        INNER JOIN DEPARTAMENTO d
+        ON d.id_departamento = c.id_departamento
+        WHERE a.estado_usuario = 1
+        AND a.id_puesto is not null
+        AND b.id_estado_puesto = 2
+        ORDER BY b.salario DESC
+        FETCH FIRST 5 ROWS ONLY
+        ;
+END;
 
 
 
@@ -1346,7 +1526,7 @@ FETCH FIRST 5 ROWS ONLY
 
 --mayor gasto
 
-SELECT SUM(b.salario) as total, d.id_departamento, d.nombre_departamento FROM USUARIO a 
+SELECT SUM(b.salario) as total, d.id_departamento, d.nombre_departamento, b.nombre_puesto FROM USUARIO a 
 INNER JOIN PUESTO b
 ON a.id_puesto = b.id_puesto
 INNER JOIN DETALLE_PUESTO c
@@ -1355,7 +1535,7 @@ INNER JOIN DEPARTAMENTO d
 ON d.id_departamento = c.id_departamento
 WHERE a.estado_usuario = 1
 AND a.id_puesto is not null
-GROUP BY d.id_departamento, d.nombre_departamento
+GROUP BY d.id_departamento, d.nombre_departamento, b.nombre_puesto
 ORDER BY total DESC
 FETCH FIRST 5 ROWS ONLY
 ;

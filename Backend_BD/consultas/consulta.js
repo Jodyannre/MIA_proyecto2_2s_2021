@@ -1311,11 +1311,14 @@ async function enviarExpedientes(id_revisor, connection){
 
 
 async function enviarRequisitosAplicante(nombre_aplicante, connection){
+  /* asi estaba antes
+  e.tamano, e.obligatorio, g.nombre_formato, g.id_formato, b.id_expediente, c.id_puesto FROM USUARIO a
+  */
   console.log("id del aplicante: ",nombre_aplicante);
   try {
     const resultado = await connection.execute(
       `SELECT a.nombre_usuario,a.id_usuario,c.nombre_puesto, e.id_requisito,e.nombre_requisito,
-      e.tamano, e.obligatorio, g.nombre_formato, g.id_formato, b.id_expediente, c.id_puesto FROM USUARIO a
+      e.tamano, e.obligatorio, e.tamano, e.tamano, b.id_expediente, c.id_puesto FROM USUARIO a
       INNER JOIN DETALLE_EXPEDIENTE b
       ON a.id_usuario = b.id_usuario
       INNER JOIN PUESTO c
@@ -1329,6 +1332,8 @@ async function enviarRequisitosAplicante(nombre_aplicante, connection){
       INNER JOIN FORMATO g
       ON g.id_formato = f.id_formato
       WHERE nombre_usuario = '${nombre_aplicante}'
+      GROUP BY a.nombre_usuario,a.id_usuario,c.nombre_puesto, e.id_requisito,e.nombre_requisito,
+      e.tamano, e.obligatorio, e.tamano, e.tamano, b.id_expediente, c.id_puesto
       ORDER BY e.id_requisito
       `
     );

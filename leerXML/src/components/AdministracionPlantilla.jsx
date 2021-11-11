@@ -138,14 +138,16 @@ function AdministracionPlantilla() {
     }
 
     const handleShow = (dato) => {
+      console.log(dato)
+      console.log('--------------')
       setUsuarioSeleccionado(dato);
       setNombre(dato[0]);
       setPass(dato[6]);
       setCorreo(dato[7]);
-      if (dato[9]===null){
+      if (dato[11]===null){
         setId_puesto(-1);
       }else{
-        setId_puesto(dato[9]);
+        setId_puesto(dato[11]);
       }
       setUsuarioEditar(dato);
       setShow(true)
