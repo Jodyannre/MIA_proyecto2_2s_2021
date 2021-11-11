@@ -540,6 +540,9 @@ END;
 commit;
 
 
+select * from usuario;
+select * from departamento;
+select * from puesto;
 --Consulta para traer revisores de expedientes más desocupados
 --El rol del revisor es 3
 SELECT id_usuario,nombre_usuario,email FROM USUARIO 
