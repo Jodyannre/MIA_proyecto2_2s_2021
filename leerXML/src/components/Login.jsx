@@ -71,8 +71,8 @@ function Login() {
             }
           })
           .then((res) => {
-            console.log('Credenciales')
-            console.log(res);
+            //console.log('Credenciales')
+            //console.log(res);
             setCredenciales(res.data);
           })  
         } catch (err) {
@@ -96,8 +96,8 @@ function Login() {
             }
           )
           .then((res) => {
-              console.log('Autenticacion');
-              console.log(res.data);
+              //console.log('Autenticacion');
+              //console.log(res.data);
               setAutenticacion(res.data);
           })  
         } catch (err) {
@@ -112,11 +112,11 @@ function Login() {
         if (credenciales && autenticacion===null){
             if (credenciales[0]==='no'){
                 //Credenciales malas o el usuario no existe
-                console.log('El usuario no existe');
+                //console.log('El usuario no existe');
                 setShow(true);
                 return;
             }
-            console.log('Aqui no debería de estar');
+            //console.log('Aqui no debería de estar');
             await validarUsuario();
             //Crear credenciales que se van a guardar en localstorage del usuario
             const usuario = {
@@ -135,8 +135,8 @@ function Login() {
         }
         
         if (autenticacion){
-            console.log('Redireccionar')
-            console.log(autenticacion);
+            //console.log('Redireccionar')
+            //console.log(autenticacion);
             //Hacer la redirección aquí y guardar los datos de credenciales en localstorage
             const tokens = {
                 refresh: autenticacion.refreshToken,

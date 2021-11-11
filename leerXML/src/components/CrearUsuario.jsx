@@ -36,8 +36,8 @@ function CrearUsuario() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -68,8 +68,8 @@ function CrearUsuario() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -130,7 +130,7 @@ function CrearUsuario() {
 
     const departamentoSeleccionado = e =>{
       setDepartamento(parseInt(e.target.value, 10));
-      console.log(e.target.value);
+      //console.log(e.target.value);
     }
 
     const cambioEmail = e => {
@@ -139,7 +139,7 @@ function CrearUsuario() {
 
     const rolSeleccionado = e =>{
       setRol(parseInt(e.target.value, 10));
-      console.log(e.target.value);
+      //console.log(e.target.value);
     }
 
     useEffect( async() => {
@@ -162,7 +162,7 @@ try{
             console.error(err.message);
           }
         }else{
-          console.log(prueba);
+          //console.log(prueba);
           setDatosRoles(prueba); 
         }
       };  
@@ -186,7 +186,7 @@ try{
             console.error(err.message);
           }
         }else{
-          console.log(prueba2);
+          //console.log(prueba2);
           setDatosDepartamentos(prueba2); 
         }
       };  
@@ -229,7 +229,7 @@ try{
       if (permisoValidado===null){
         if (1 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido
@@ -244,12 +244,12 @@ try{
         if (!datosRoles){
           await traerRoles();
         }else{
-          console.log(datosRoles);
+          //console.log(datosRoles);
         }   
         if (!datosDepartamentos){
           await traerDepartamentos();
         }else{
-          console.log(datosDepartamentos);
+          //console.log(datosDepartamentos);
         }   
         //let res = await traerPuestos();
         //console.log(res);

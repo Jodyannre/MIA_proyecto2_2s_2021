@@ -61,7 +61,7 @@ function InicioGuest() {
 
       async function actualizarCalificacion (puesto,calificacion){
         await updateCalificacion(puesto,calificacion);
-        console.log("actualizada");
+        //console.log("actualizada");
       }
 
       const abrirFormulario = (puesto)=>{
@@ -78,8 +78,8 @@ function InicioGuest() {
         try {
           return axios.get(URL)
           .then((res) => {
-            console.log('se cargo.')
-            console.log(res);
+            //console.log('se cargo.')
+            //console.log(res);
             setPuestos(res);
           })  
         } catch (err) {
@@ -115,7 +115,7 @@ function InicioGuest() {
         try {
           return axios.get(URL)
           .then((res) => {
-            console.log('se cargo.')
+            //console.log('se cargo.')
             //console.log(res);
             setCategorias(res);
           })  

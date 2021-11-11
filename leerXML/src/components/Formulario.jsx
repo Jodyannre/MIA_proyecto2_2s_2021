@@ -46,7 +46,7 @@ function Formulario() {
               let nuevoNombre = dpi+"_"+nombreArchivo+"."+tipoArchivo;
               nombreDoc = nuevoNombre;
               let renamedFile = new File([cv], nuevoNombre);
-              console.log(renamedFile);
+              //console.log(renamedFile);
               await consulta.cargarArchivo(renamedFile,nuevoNombre);
 
               //Hay que crear también el documento
@@ -134,7 +134,7 @@ function Formulario() {
 
     const puestoSeleccionado = e =>{
       setPuesto(parseInt(e.target.value, 10));
-      console.log(e.target.value);
+      //console.log(e.target.value);
     }
 
     useEffect( async() => {
@@ -156,14 +156,14 @@ function Formulario() {
             console.error(err.message);
           }
         }else{
-          console.log(prueba);
+          //console.log(prueba);
           setDatosPuestos(prueba); 
         }
       };  
       if (!datosPuestos){
         await traerPuestos();
       }else{
-        console.log(datosPuestos);
+        //console.log(datosPuestos);
       }   
       //let res = await traerPuestos();
       //console.log(res);

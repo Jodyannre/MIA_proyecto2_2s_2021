@@ -59,7 +59,7 @@ function Acexpediente() {
         //Ver CV
         //global.cvFormato = usuarioSeleccionado[13];
         //global.cvUbicacion = usuarioSeleccionado[11];
-        console.log(usuarioSeleccionado);
+        //console.log(usuarioSeleccionado);
         //console.log(global.cvFormato);
         //console.log(global.cvUbicacion);
         history.push({
@@ -103,8 +103,8 @@ function Acexpediente() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -116,8 +116,8 @@ function Acexpediente() {
     if (cookies != ''){
       //Existe mas de alguno
       let tmp = cookies.split(';');
-      console.log('longitud ',tmp.length);
-      console.log(tmp);
+      //console.log('longitud ',tmp.length);
+      //console.log(tmp);
       if (tmp.length === 1){
         //Solo existe el de refresco
         setRefreshToken(tmp[0].replace('refresh=',''));
@@ -151,9 +151,9 @@ function Acexpediente() {
             }
           })
           .then((res) => {
-            console.log('se cargo.')
+            //console.log('se cargo.')
             setUsuarios(res);
-            console.log(res);
+            //console.log(res);
           })  
         } catch (err) {
           console.error(err.message);
@@ -189,9 +189,9 @@ function Acexpediente() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -217,7 +217,7 @@ function Acexpediente() {
         })
         .then((res) => {
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -241,9 +241,9 @@ function Acexpediente() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -268,11 +268,11 @@ function Acexpediente() {
           }
         })
         .then((res) => {
-          console.log('se cargo CV.')
+          //console.log('se cargo CV.')
           global.cvFormato = res.data[0][1];
           global.cvUbicacion = res.data[0][0];
           setCV(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -293,7 +293,7 @@ function Acexpediente() {
       setEditado(editado+1);
       setUsuarios(null);
       await traerExpediente();
-      console.log('Editado');
+      //console.log('Editado');
     }
 
     const handleShow = (dato) => {
@@ -304,12 +304,12 @@ function Acexpediente() {
       setUsuarioEditar(dato);
       setId_documento(17);
       setShow(true)
-      console.log('dato: ',dato);
+      //console.log('dato: ',dato);
     }
 
     const editarNombre = e => {
       setNombre(e.target.value);
-      console.log(nombre);
+      //console.log(nombre);
     }
   
     const editarPass = e => {
@@ -322,18 +322,18 @@ function Acexpediente() {
 
     const handleOpcionFiltro = e => {
       setOpcionFiltro(parseInt(e.target.value, 10));
-      console.log(e.target.value);
+      //console.log(e.target.value);
     };
 
     const handleOpcionEscrita = e =>{
       setOpcionEscrita(e.target.value);
-      console.log(opcionEscrita);
+      //console.log(opcionEscrita);
     }
 
 
   
     const handleSubmit = async (event) => {
-      console.log('filtrando');
+      //console.log('filtrando');
     };
 
 
@@ -356,9 +356,9 @@ function Acexpediente() {
           }
         })
         .then((res) => {
-          console.log('se edito.')
+          //console.log('se edito.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -380,9 +380,9 @@ function Acexpediente() {
             }
           })
           .then((res) => {
-            console.log('se cargo.')
+            //console.log('se cargo.')
             setUsuarios(res);
-            console.log(res);
+            //console.log(res);
           })  
         } catch (err) {
           console.error(err.message);
@@ -431,7 +431,7 @@ function Acexpediente() {
         if (permisoValidado===null){
           if (3 === usuario.rol){
             setPermisoValidado(true);
-            console.log('Tiene permiso.');
+            //console.log('Tiene permiso.');
           }else{
             setPermisoValidado(false);
             //No permitido

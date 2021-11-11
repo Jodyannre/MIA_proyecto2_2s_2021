@@ -24,8 +24,8 @@ const VerDoc = props => {
         if (cookies != ''){
           //Existe mas de alguno
           let tmp = cookies.split(';');
-          console.log('longitud ',tmp.length);
-          console.log(tmp);
+          //console.log('longitud ',tmp.length);
+          //console.log(tmp);
           if (tmp.length === 1){
             //Solo existe el de refresco
             setRefreshToken(tmp[0].replace('refresh=',''));
@@ -56,8 +56,8 @@ const VerDoc = props => {
             }
           )
           .then((res) => {
-              console.log('Autenticacion');
-              console.log(res);
+              //console.log('Autenticacion');
+              //console.log(res);
               setTokenRespuesta(res.data);
           })  
         } catch (err) {
@@ -128,7 +128,7 @@ try{
             || 4 === usuario.rol
             || 5 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido
@@ -141,8 +141,8 @@ try{
       if (tokenValidado && permisoValidado){
         //Hacer todo lo de la página
 
-        console.log('Location estado');
-        console.log(location.state.ubicacion);
+        //console.log('Location estado');
+        //console.log(location.state.ubicacion);
         setFile("http://localhost:3001/files/"+location.state.ubicacion);
         setFormato(location.state.formato);
       }

@@ -33,8 +33,8 @@ function CargaMasiva() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -65,8 +65,8 @@ function CargaMasiva() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -137,7 +137,7 @@ function CargaMasiva() {
       if (permisoValidado===null){
         if (1 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido
@@ -163,7 +163,7 @@ function CargaMasiva() {
             setJsonArchivo(result);
             setShow(true);
           });
-          console.log('Cargado');
+          //console.log('Cargado');
         }
         if (jsonArchivo && cargar){
           //console.log(jsonArchivo.departamentos);
@@ -200,7 +200,7 @@ function CargaMasiva() {
     )
     /*
     if (archivo){
-      console.log(archivo);
+      //console.log(archivo);
     }
     */
     if (preview && !cargar){

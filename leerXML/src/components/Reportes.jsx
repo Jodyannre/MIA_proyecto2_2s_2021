@@ -40,8 +40,8 @@ function Reportes() {
             }
           )
           .then((res) => {
-              console.log('Autenticacion');
-              console.log(res);
+              //console.log('Autenticacion');
+              //console.log(res);
               setTokenRespuesta(res.data);
           })  
         } catch (err) {
@@ -53,8 +53,8 @@ function Reportes() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -121,7 +121,7 @@ function Reportes() {
           })
           .then((res) => {
             setResultado(res.data[0]);
-            console.log(res.data[0]);
+            //console.log(res.data[0]);
           })  
         } catch (err) {
           console.error(err.message);
@@ -134,7 +134,7 @@ function Reportes() {
           return axios.get(URL)
           .then((res) => {
             setDepartamentos(res.data);
-            console.log(res.data);
+            //console.log(res.data);
           })  
         } catch (err) {
           console.error(err.message);
@@ -147,7 +147,7 @@ function Reportes() {
           return axios.get(URL)
           .then((res) => {
             setResultado(res.data);
-            console.log(res.data);
+            //console.log(res.data);
           })  
         } catch (err) {
           console.error(err.message);
@@ -171,7 +171,7 @@ function Reportes() {
           })
           .then((res) => {
             setResultado(res.data);
-            console.log(res.data);
+            //console.log(res.data);
           })  
         } catch (err) {
           console.error(err.message);
@@ -225,7 +225,7 @@ function Reportes() {
         if (permisoValidado===null){
         if (1 === usuario.rol){
             setPermisoValidado(true);
-            console.log('Tiene permiso.');
+            //console.log('Tiene permiso.');
         }else{
             setPermisoValidado(false);
             //No permitido
@@ -300,8 +300,8 @@ function Reportes() {
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[2]}</td>
@@ -337,8 +337,8 @@ function Reportes() {
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[1]}</td>
@@ -372,8 +372,8 @@ function Reportes() {
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[0]}</td>
@@ -409,8 +409,8 @@ function Reportes() {
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[0]}</td>
@@ -441,12 +441,13 @@ function Reportes() {
                         <tr>
                             <th>Capital</th>
                             <th>Departamento</th>
+                            <th>Departamento</th>
                         </tr>
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[0]}</td>
@@ -480,8 +481,8 @@ function Reportes() {
                     </thead>
                     <tbody>
                         { resultado.map(dato=>{
-                            console.log('iterando');
-                            console.log(dato);
+                            //console.log('iterando');
+                            //console.log(dato);
                             return(
                                 <tr>
                                 <td>{dato[3]}</td>

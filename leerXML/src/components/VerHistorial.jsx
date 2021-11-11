@@ -25,8 +25,8 @@ const VerHistorial = props => {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -57,8 +57,8 @@ const VerHistorial = props => {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -117,7 +117,7 @@ try{
     if (permisoValidado===null){
       if (4 === usuario.rol || 5 === usuario.rol){
         setPermisoValidado(true);
-        console.log('Tiene permiso.');
+        //console.log('Tiene permiso.');
       }else{
         setPermisoValidado(false);
         //No permitido
@@ -160,7 +160,7 @@ try{
         }
       })
       .then((res) => {
-        console.log(res.data);
+        //console.log(res.data);
         setDocumentos(res.data);
       })  
     } catch (err) {

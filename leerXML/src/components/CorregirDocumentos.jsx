@@ -40,8 +40,8 @@ function CorregirDocumentos() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -72,8 +72,8 @@ function CorregirDocumentos() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -84,7 +84,7 @@ function CorregirDocumentos() {
 
 
     const handleVer = (dato) =>{
-      console.log('ver seleccionado')
+      //console.log('ver seleccionado')
       history.push({
           pathname: '/verDoc',
           search: '?query=abc',
@@ -94,8 +94,8 @@ function CorregirDocumentos() {
     }
 
     const handleHistorial = (dato) =>{
-      console.log('ver seleccionado')
-      console.log(dato[1]);
+      //console.log('ver seleccionado')
+      //console.log(dato[1]);
       history.push({
           pathname: '/verHistorial',
           search: '?query=abc',
@@ -124,7 +124,7 @@ function CorregirDocumentos() {
 
     const handleShow = (dato) =>{
         setShow(true);
-        console.log('En handleShow',dato);
+        //console.log('En handleShow',dato);
         setId_documento(dato[1]);
         setId_formato(dato[9]);
         setCui(dato[5]);
@@ -133,8 +133,8 @@ function CorregirDocumentos() {
 
     const handleClose  = async (event) => {
         setShow(false);
-        console.log('formato: ',id_formato);
-        console.log(event.target.value)
+        //console.log('formato: ',id_formato);
+        //console.log(event.target.value)
         if (event.target.value === '0'){
           //Cancelar
 
@@ -148,7 +148,7 @@ function CorregirDocumentos() {
           let nuevoNombre = cui+"_"+nombreArchivo+"."+tipoArchivo;
           nombreDoc = nuevoNombre;
           let renamedFile = new File([documentoSeleccionado], nuevoNombre);
-          console.log(renamedFile);
+          //console.log(renamedFile);
           await consulta.cargarArchivo(renamedFile,nuevoNombre);
 
           //Reasignar el documento
@@ -184,7 +184,7 @@ function CorregirDocumentos() {
           }
         })
         .then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           setRequisitos(res.data);
         })  
       } catch (err) {
@@ -234,7 +234,7 @@ try{
     if (permisoValidado===null){
       if (4 === usuario.rol){
         setPermisoValidado(true);
-        console.log('Tiene permiso.');
+        //console.log('Tiene permiso.');
       }else{
         setPermisoValidado(false);
         //No permitido

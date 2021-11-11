@@ -50,8 +50,8 @@ function RequisitosAplicante() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -63,8 +63,8 @@ function RequisitosAplicante() {
     if (cookies != ''){
       //Existe mas de alguno
       let tmp = cookies.split(';');
-      console.log('longitud ',tmp.length);
-      console.log(tmp);
+      //console.log('longitud ',tmp.length);
+      //console.log(tmp);
       if (tmp.length === 1){
         //Solo existe el de refresco
         setRefreshToken(tmp[0].replace('refresh=',''));
@@ -85,10 +85,10 @@ function RequisitosAplicante() {
         if (form.checkValidity() === false || direcciones.length === 0) {
           event.preventDefault();
           event.stopPropagation();
-          console.log('Error, no se subieron los obligatorios');
+          //console.log('Error, no se subieron los obligatorios');
         }else{
             event.preventDefault();
-            console.log('Todo bien'); 
+            //console.log('Todo bien'); 
             setValidated(true);  
         }      
     };
@@ -117,7 +117,7 @@ function RequisitosAplicante() {
 
 
     async function subirArchivo(requisito,usuario,puesto){
-      console.log(requisito,usuario,puesto);
+      //console.log(requisito,usuario,puesto);
       const dato = {
         archivo: seleccionado.target.files[0],
         requisito: requisito,
@@ -125,7 +125,7 @@ function RequisitosAplicante() {
         puesto: puesto
     }
       /////////CREAR ARCHIVO RENOMBRADO
-      console.log("Requisito");
+      //console.log("Requisito");
       //console.log(dato);
       let dpi = (JSON.parse(sessionStorage.getItem('usuario'))).nombre;
       let nombreDoc = '';
@@ -147,7 +147,7 @@ function RequisitosAplicante() {
           requisito: dato.requisito,
           puesto: dato.puesto
         }
-        console.log(documento);
+        //console.log(documento);
       const r2 = setTimeout(() => {
           consulta.crearDocumento(JSON.stringify(documento));
       }, 500);
@@ -176,7 +176,7 @@ function RequisitosAplicante() {
               .then((res) => {
                 setRequisitos(res.data);
                 //console.log(res.data);
-                console.log(requisitos);
+                //console.log(requisitos);
               })  
             } catch (err) {
               console.error(err.message);
@@ -223,7 +223,7 @@ function RequisitosAplicante() {
       if (permisoValidado===null){
         if (4 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido

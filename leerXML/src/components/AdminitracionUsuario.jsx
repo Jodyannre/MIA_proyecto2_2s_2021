@@ -41,8 +41,8 @@ function AdminitracionUsuario() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -73,8 +73,8 @@ function AdminitracionUsuario() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -87,7 +87,7 @@ function AdminitracionUsuario() {
       setEditar(false);
       setUsuarios(null);
       await traerUsuarios();
-      console.log('Regresar');
+      //console.log('Regresar');
     }
 
     async function regresarInicio(){
@@ -97,10 +97,10 @@ function AdminitracionUsuario() {
     const handleClose  = async (event) => {
       setShow(false);
       if (event.target.value === '0'){
-        console.log(event.target.value);
+        //console.log(event.target.value);
       }else if (event.target.value === '1'){
         setEditar(true);
-        console.log(event.target.value);
+        //console.log(event.target.value);
       }else {
         await eliminarUsuario();
         setEditado(editado+1);
@@ -132,9 +132,9 @@ function AdminitracionUsuario() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -149,7 +149,7 @@ function AdminitracionUsuario() {
       setEditado(editado+1);
       setUsuarios(null);
       await traerUsuarios();
-      console.log('Editado');
+      //console.log('Editado');
     }
 
     const handleShow = (dato) => {
@@ -164,12 +164,12 @@ function AdminitracionUsuario() {
         setId_puesto(dato[9]);
       }
       setShow(true)
-      console.log('dato: ',dato);
+      //console.log('dato: ',dato);
     }
 
     const editarNombre = e => {
       setNombre(e.target.value);
-      console.log(nombre);
+      //console.log(nombre);
     }
   
     const editarPass = e => {
@@ -182,18 +182,18 @@ function AdminitracionUsuario() {
 
     const handleOpcionFiltro = e => {
       setOpcionFiltro(e.target.value);
-      console.log(e.target.value);
+      //console.log(e.target.value);
     };
 
     const handleOpcionEscrita = e =>{
       setOpcionEscrita(e.target.value);
-      console.log(opcionEscrita);
+      //console.log(opcionEscrita);
     }
 
 
   
     const handleSubmit = async (event) => {
-      console.log('filtrando');
+      //console.log('filtrando');
     };
 
 
@@ -216,9 +216,9 @@ function AdminitracionUsuario() {
           }
         })
         .then((res) => {
-          console.log('se edito.')
+          //console.log('se edito.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -243,9 +243,9 @@ function AdminitracionUsuario() {
           }
         })
         .then((res) => {
-          console.log('se cargo.')
+          //console.log('se cargo.')
           setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -293,7 +293,7 @@ function AdminitracionUsuario() {
       if (permisoValidado===null){
         if (1 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido

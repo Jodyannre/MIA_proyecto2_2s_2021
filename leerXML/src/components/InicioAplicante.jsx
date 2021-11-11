@@ -44,8 +44,8 @@ function InicioAplicante() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -72,7 +72,7 @@ function InicioAplicante() {
             || expediente[0][8] === 6){
                 setEdicion(true);
                 sessionStorage.setItem('editar',true);
-                console.log('Se puede editar');
+                //console.log('Se puede editar');
             }else{
               sessionStorage.setItem('editar',false);
             }
@@ -199,8 +199,8 @@ function InicioAplicante() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -254,7 +254,7 @@ function InicioAplicante() {
         if (permisoValidado===null){
           if (4 === usuario.rol || 5 === usuario.rol){
             setPermisoValidado(true);
-            console.log('Tiene permiso.');
+            //console.log('Tiene permiso.');
           }else{
             setPermisoValidado(false);
             //No permitido
@@ -283,9 +283,9 @@ function InicioAplicante() {
               console.error(err.message);
             }
           };
-          console.log('validadores')
-          console.log(tokenValidado);
-          console.log(permisoValidado);
+          //console.log('validadores')
+          //console.log(tokenValidado);
+          //console.log(permisoValidado);
           if (tokenValidado && permisoValidado){
             
             if (expediente === null && documentosCargados === null && documentosRechazados === null){

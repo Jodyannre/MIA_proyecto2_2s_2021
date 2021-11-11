@@ -52,8 +52,8 @@ function RevisionRequisitos() {
       if (cookies != ''){
         //Existe mas de alguno
         let tmp = cookies.split(';');
-        console.log('longitud ',tmp.length);
-        console.log(tmp);
+        //console.log('longitud ',tmp.length);
+        //console.log(tmp);
         if (tmp.length === 1){
           //Solo existe el de refresco
           setRefreshToken(tmp[0].replace('refresh=',''));
@@ -84,8 +84,8 @@ function RevisionRequisitos() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -108,7 +108,7 @@ function RevisionRequisitos() {
         if (expediente[0][8]+1 === 2 
             || expediente[0][8] === 3
             || expediente[0][8] === 6){
-                console.log('El expediente se puede revisar');
+                //console.log('El expediente se puede revisar');
                 setEdicion(true);
             }
     }
@@ -144,9 +144,9 @@ function RevisionRequisitos() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -182,8 +182,8 @@ function RevisionRequisitos() {
 
     const handleVer = (ubicacion,formato) =>{
         global.documentoVer = ubicacion
-        console.log('ver seleccionado')
-        console.log(ubicacion);
+        //console.log('ver seleccionado')
+        //console.log(ubicacion);
         setExpediente(null);
         setRequisitos(null);
         history.push({
@@ -206,13 +206,13 @@ function RevisionRequisitos() {
         setShow(false);
         if (event.target.value === '0'){
             //Cancelar
-            console.log(documento);
+            //console.log(documento);
         }else if (event.target.value === '1'){
             //Aceptar
             await aceptarDocumento();
             setExpediente(null);
             setRequisitos(null);
-            console.log("cargando datos...");
+            //console.log("cargando datos...");
             await getExpedienteAplicante();
             await getRequisitosAplicante();
         }else if (event.target.value === '2'){
@@ -238,7 +238,7 @@ function RevisionRequisitos() {
           setExpediente(null);
           setRequisitos(null);     
           setMotivo(null);       
-          console.log("cargando datos...");
+          //console.log("cargando datos...");
           await getExpedienteAplicante();
           await getRequisitosAplicante();
           
@@ -262,9 +262,9 @@ function RevisionRequisitos() {
             }
           })
           .then((res) => {
-            console.log('se elimino.')
+            //console.log('se elimino.')
             //setUsuarios(res);
-            console.log(res);
+            //console.log(res);
           })  
         } catch (err) {
           console.error(err.message);
@@ -288,9 +288,9 @@ function RevisionRequisitos() {
             }
           })
           .then((res) => {
-            console.log('se elimino.')
+            //console.log('se elimino.')
             //setUsuarios(res);
-            console.log(res);
+            //console.log(res);
           })  
         } catch (err) {
           console.error(err.message);
@@ -316,9 +316,9 @@ function RevisionRequisitos() {
             }
           })
           .then((res) => {
-            console.log('se elimino.')
+            //console.log('se elimino.')
             //setUsuarios(res);
-            console.log(res);
+            //console.log(res);
           })  
         } catch (err) {
           console.error(err.message);
@@ -341,8 +341,8 @@ function RevisionRequisitos() {
         })
         .then((res) => {
         setRequisitos(res.data);
-        console.log('Requisitos de consulta')
-        console.log(res.data);
+        //console.log('Requisitos de consulta')
+        //console.log(res.data);
         })  
     } catch (err) {
         console.error(err.message);
@@ -410,7 +410,7 @@ function RevisionRequisitos() {
       if (permisoValidado===null){
         if (3 === usuario.rol){
           setPermisoValidado(true);
-          console.log('Tiene permiso.');
+          //console.log('Tiene permiso.');
         }else{
           setPermisoValidado(false);
           //No permitido
@@ -425,13 +425,13 @@ function RevisionRequisitos() {
         
 
           if (expediente === null && requisitos === null){
-            console.log("cargando datos...");
+            //console.log("cargando datos...");
             await getExpedienteAplicante();
             await getRequisitosAplicante();
           }else if (requisitos && expediente){
               //Configurar los valores el expediente
-            console.log("expediente");
-            console.log(expediente);
+            //console.log("expediente");
+            //console.log(expediente);
             handleEdicion();
             setCui(expediente[0][1]);
             setNombre(expediente[0][2]);
@@ -444,7 +444,7 @@ function RevisionRequisitos() {
           if (requisitos === null){
             await getRequisitosAplicante();
           }else if (requisitos && expediente){
-              console.log(requisitos);
+              //console.log(requisitos);
           }
           **/
         }

@@ -41,11 +41,11 @@ function AdministracionPlantilla() {
     const handleClose  = async (event) => {
       setShow(false);
       if (event.target.value === '0'){
-        console.log(event.target.value);
+        //console.log(event.target.value);
       }else if (event.target.value === '1'){
           //Asociar
         //setEditar(true);
-        console.log(event.target.value);
+        //console.log(event.target.value);
         await asociarUsuario();
         setUsuarios(null);
         await traerPlantilla();
@@ -84,9 +84,9 @@ function AdministracionPlantilla() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -117,9 +117,9 @@ function AdministracionPlantilla() {
           }
         })
         .then((res) => {
-          console.log('se elimino.')
+          //console.log('se elimino.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -134,12 +134,12 @@ function AdministracionPlantilla() {
       setEditado(editado+1);
       setUsuarios(null);
       await traerPlantilla();
-      console.log('Editado');
+      //console.log('Editado');
     }
 
     const handleShow = (dato) => {
-      console.log(dato)
-      console.log('--------------')
+      //console.log(dato)
+      //console.log('--------------')
       setUsuarioSeleccionado(dato);
       setNombre(dato[0]);
       setPass(dato[6]);
@@ -151,7 +151,7 @@ function AdministracionPlantilla() {
       }
       setUsuarioEditar(dato);
       setShow(true)
-      console.log('dato: ',dato);
+      //console.log('dato: ',dato);
     }
 
     const regresar = () =>{
@@ -162,7 +162,7 @@ function AdministracionPlantilla() {
 
     const editarNombre = e => {
       setNombre(e.target.value);
-      console.log(nombre);
+      //console.log(nombre);
     }
   
     const editarPass = e => {
@@ -175,12 +175,12 @@ function AdministracionPlantilla() {
 
     const handleOpcionFiltro = e => {
       setOpcionFiltro(e.target.value);
-      console.log(e.target.value);
+      //console.log(e.target.value);
     };
 
     const handleOpcionEscrita = e =>{
       setOpcionEscrita(e.target.value);
-      console.log(opcionEscrita);
+      //console.log(opcionEscrita);
     }
 
 
@@ -202,9 +202,9 @@ function AdministracionPlantilla() {
           }
         })
         .then((res) => {
-          console.log('se edito.')
+          //console.log('se edito.')
           //setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -227,8 +227,8 @@ function AdministracionPlantilla() {
           }
         )
         .then((res) => {
-            console.log('Autenticacion');
-            console.log(res);
+            //console.log('Autenticacion');
+            //console.log(res);
             setTokenRespuesta(res.data);
         })  
       } catch (err) {
@@ -241,8 +241,8 @@ function AdministracionPlantilla() {
     if (cookies != ''){
       //Existe mas de alguno
       let tmp = cookies.split(';');
-      console.log('longitud ',tmp.length);
-      console.log(tmp);
+      //console.log('longitud ',tmp.length);
+      //console.log(tmp);
       if (tmp.length === 1){
         //Solo existe el de refresco
         setRefreshToken(tmp[0].replace('refresh=',''));
@@ -273,9 +273,9 @@ function AdministracionPlantilla() {
           }
         })
         .then((res) => {
-          console.log('se cargo.')
+          //console.log('se cargo.')
           setUsuarios(res);
-          console.log(res);
+          //console.log(res);
         })  
       } catch (err) {
         console.error(err.message);
@@ -285,13 +285,13 @@ function AdministracionPlantilla() {
 
 
     useEffect( async() => { 
-      console.log('Esta en plantilla');
+      //console.log('Esta en plantilla');
       try{
         //Verificar que tiene permiso y que la sesión existe
         verCookies();
         if (tokenRespuesta){
-          console.log("tokenRespuesta");
-          console.log(document.cookie);
+          //console.log("tokenRespuesta");
+          //console.log(document.cookie);
           if (document.cookie != ''){
             document.cookie = `token=${tokenRespuesta.token}; max-age=${global.tokenLife}; path=/; samesite=strict;`;
             //actualizar localstorage
@@ -325,7 +325,7 @@ function AdministracionPlantilla() {
         if (permisoValidado===null){
           if (2 === usuario.rol){
             setPermisoValidado(true);
-            console.log('Tiene permiso.');
+            //console.log('Tiene permiso.');
           }else{
             setPermisoValidado(false);
             //No permitido
